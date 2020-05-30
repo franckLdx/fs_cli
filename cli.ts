@@ -8,6 +8,6 @@ await new Command()
     default: false,
     global: true,
   })
-  .command("rmDir <dirs...:string>")
+  .command("rm <paths...:string>")
   .action(rmCommand)
   .parse(Deno.args);
