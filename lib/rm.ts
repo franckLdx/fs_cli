@@ -7,6 +7,8 @@ export async function rmCommand(options: IFlags, dirs: string[]) {
     if (await exists(dir)) {
       Log.info(`Deleting ${dir}`);
       await Deno.remove(dir, { recursive: true });
+    } else {
+      Log.info(`${dir} does not exist`);
     }
   }
 }
