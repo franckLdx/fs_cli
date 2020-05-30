@@ -1,0 +1,2 @@
+Deno.test("simple exec", () => {
+});
