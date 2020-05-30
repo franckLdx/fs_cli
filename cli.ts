@@ -1,11 +1,13 @@
 import { Command } from "./deps.ts";
-import { rmDirCommand } from "./lib/rm_dir.ts";
-import { emptyDirCommand } from "./lib/empty_dir.ts";
+import { rmCommand } from "./lib/rm.ts";
+import { setup } from "./lib/logger.ts";
 
 await new Command()
   .version("0.1.0")
+  .option("-v, --verbose [verbose:boolean]", "verbose mode", {
+    default: false,
+    global: true,
+  })
   .command("rmDir <dirs...:string>")
-  .action(rmDirCommand)
-  .command("emptyDir <dirs...:string>")
-  .action(emptyDirCommand)
+  .action(rmCommand)
   .parse(Deno.args);
