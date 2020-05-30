@@ -1,14 +1,21 @@
-import { Log, IFlags, LogRecord, BaseHandler } from "../deps.ts";
+import {
+  IFlags,
+  LogRecord,
+  BaseHandler,
+  LoggerConfig,
+  setupLogger,
+} from "../deps.ts";
 
 export async function setup(option: IFlags) {
   const verbose = option.verbose ?? false;
-  const config: Log.LoggerConfig = {
+  const config: LoggerConfig = {
     level: verbose ? "INFO" : "WARNING",
     handlers: ["console"],
   };
-  await Log.setup({
+  const handler = new SimpleHandler("DEBUG", { formatter });
+  await setupLogger({
     handlers: {
-      console: new SimpleHandler("DEBUG", { formatter }),
+      console: handler,
     },
     loggers: {
       default: config,
