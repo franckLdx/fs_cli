@@ -52,7 +52,7 @@ const checkProcess = async (
   assertEquals(new TextDecoder("utf-8").decode(actualError), error);
 };
 
-Deno.test("rm: patth exist, no verbose -> sucess without output", async () => {
+Deno.test("rm: path exist, quiet mode -> sucess without output", async () => {
   let p: Deno.Process | undefined;
   try {
     const filePath = await makeFile("foo.bar");
@@ -63,7 +63,7 @@ Deno.test("rm: patth exist, no verbose -> sucess without output", async () => {
   }
 });
 
-Deno.test("rm: path exist, verbose -> sucess with output", async () => {
+Deno.test("rm: path exist, no quiet -> sucess with output", async () => {
   let p;
   try {
     const filePath = await makeFile("foo.bar");
@@ -77,7 +77,7 @@ Deno.test("rm: path exist, verbose -> sucess with output", async () => {
   }
 });
 
-Deno.test("rm: nothing when path does not exist, no verbose -> sucess without output", async () => {
+Deno.test("rm: nothing when path does not exist, quiet -> sucess without output", async () => {
   let p;
   try {
     const paths = ["foo.bar1"];
@@ -95,7 +95,7 @@ Deno.test("rm: nothing when path does not exist, no verbose -> sucess without ou
   }
 });
 
-Deno.test("rm: nothing when path does not exist, verbose -> sucess with output", async () => {
+Deno.test("rm: nothing when path does not exist, not quiet -> sucess with output", async () => {
   let p;
   try {
     const paths = ["foo.bar1"];

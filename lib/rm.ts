@@ -9,19 +9,12 @@ export function addRmCommand(command: Command<any, any>) {
 
 export async function rmCommand(options: IFlags, paths: string[]) {
   await setup(options);
-  const remove = removeHOF(options);
   for await (const path of paths) {
-    await remove(path);
-  }
-}
-
-const removeHOF = (options: IFlags) => {
-  return async (path: string) => {
-    if (options.dryRun) {
-      info(`Shoudl delete ${path}`);
-    } else {
+    if (await exists(path)) {
       info(`Deleting ${path}`);
       await Deno.remove(path, { recursive: true });
+    } else {
+      info(`${path} does not exist`);
     }
-  };
-};
+  }
+}
