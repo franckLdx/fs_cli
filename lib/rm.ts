@@ -1,5 +1,11 @@
-import { IFlags, exists, getLogger } from "../deps.ts";
+import { IFlags, exists, getLogger, Command } from "../deps.ts";
 import { setup } from "./logger.ts";
+
+export function addRmCommand(command: Command<any, any>) {
+  return command
+    .command("rm <paths...:string>")
+    .action(rmCommand);
+}
 
 export async function rmCommand(options: IFlags, paths: string[]) {
   await setup(options);

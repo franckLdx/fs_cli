@@ -56,7 +56,7 @@ Deno.test("rm: patth exist, no verbose -> sucess without output", async () => {
   let p: Deno.Process | undefined;
   try {
     const filePath = await makeFile("foo.bar");
-    p = await runRmProcess({ paths: [filePath] });
+    p = await runRmProcess({ paths: [filePath], options: ["-q"] });
     await checkProcess(p, { success: true, output: "", error: "" });
   } finally {
     await cleanTest(p);
@@ -67,7 +67,7 @@ Deno.test("rm: path exist, verbose -> sucess with output", async () => {
   let p;
   try {
     const filePath = await makeFile("foo.bar");
-    p = await runRmProcess({ paths: [filePath], options: ["-v"] });
+    p = await runRmProcess({ paths: [filePath] });
     await checkProcess(
       p,
       { success: true, output: `Deleting ${filePath}\n`, error: "" },
@@ -81,7 +81,7 @@ Deno.test("rm: nothing when path does not exist, no verbose -> sucess without ou
   let p;
   try {
     const paths = ["foo.bar1"];
-    p = await runRmProcess({ paths });
+    p = await runRmProcess({ paths, options: ["-q"] });
     await checkProcess(
       p,
       {
@@ -99,7 +99,7 @@ Deno.test("rm: nothing when path does not exist, verbose -> sucess with output",
   let p;
   try {
     const paths = ["foo.bar1"];
-    p = await runRmProcess({ paths, options: ["-v"] });
+    p = await runRmProcess({ paths });
     await checkProcess(
       p,
       {
@@ -113,7 +113,7 @@ Deno.test("rm: nothing when path does not exist, verbose -> sucess with output",
   }
 });
 
-Deno.test("rm: mix path taht exist and path that exist", async () => {
+Deno.test("rm: mix path that exist and path that exist", async () => {
   let p;
   try {
     const paths = await Promise.all([
@@ -129,7 +129,7 @@ ${paths[2]} does not exist
 Deleting ${paths[3]}
 ${paths[4]} does not exist
 `;
-    p = await runRmProcess({ paths, options: ["-v"] });
+    p = await runRmProcess({ paths });
     await checkProcess(
       p,
       {
