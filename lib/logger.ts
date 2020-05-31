@@ -14,14 +14,17 @@ export function addLogOptions(command: Command<any, any>) {
   });
 }
 
-export async function setup(option: IFlags) {
+export async function configLog(option: IFlags) {
   const handlerName = "console";
   const quiet = option.quiet ?? true;
   const config: LoggerConfig = {
     level: quiet ? "WARNING" : "INFO",
     handlers: [handlerName],
   };
-  const handler = new SimpleHandler("DEBUG", { formatter });
+  const handler = new SimpleHandler(
+    "DEBUG",
+    { formatter: getFormatter(option) },
+  );
   await setupLogger({
     handlers: {
       [handlerName]: handler,
@@ -32,8 +35,10 @@ export async function setup(option: IFlags) {
   });
 }
 
-const formatter = ({ msg }: LogRecord): string => {
-  return msg;
+const getFormatter = (option: IFlags) => {
+  const stdformatter = ({ msg }: LogRecord): string => msg;
+  const DryRunFormatter = ({ msg }: LogRecord): string => `[Dry Run] ${msg}`;
+  return option.dry ? DryRunFormatter : stdformatter;
 };
 
 class SimpleHandler extends BaseHandler {

@@ -1,4 +1,4 @@
-import { ensureDir, ensureFile, assertEquals } from "../dev_deps.ts";
+import { ensureDir, ensureFile, assertEquals, assert } from "../dev_deps.ts";
 import { exists } from "../deps.ts";
 
 const dirPath = `./test-resource`;
@@ -36,6 +36,12 @@ const cleanTest = async (p: Deno.Process | undefined) => {
   }
 };
 
+const assertDeleted = async (paths: string[]) => {
+  for await (const path of paths) {
+    assert(!(await exists(path)));
+  }
+};
+
 const checkProcess = async (
   p: Deno.Process,
   { success, output, error }: {
@@ -45,19 +51,32 @@ const checkProcess = async (
   },
 ) => {
   const { success: actualSuccess } = await p.status();
-  assertEquals(actualSuccess, success);
-  const actualOutput = await p.output();
-  assertEquals(new TextDecoder("utf-8").decode(actualOutput), output);
-  const actualError = await p.stderrOutput();
-  assertEquals(new TextDecoder("utf-8").decode(actualError), error);
+  assertEquals(
+    actualSuccess,
+    success,
+    "process exit code is not the expected one",
+  );
+  const actualOutput = new TextDecoder("utf-8").decode(await p.output());
+  assertEquals(
+    actualOutput,
+    output,
+    "wrong process output",
+  );
+  const actualError = new TextDecoder("utf-8").decode(await p.stderrOutput());
+  assertEquals(
+    actualError,
+    error,
+    "wrong proces error",
+  );
 };
 
 Deno.test("rm: path exist, quiet mode -> sucess without output", async () => {
   let p: Deno.Process | undefined;
   try {
-    const filePath = await makeFile("foo.bar");
-    p = await runRmProcess({ paths: [filePath], options: ["-q"] });
+    const paths = [await makeFile("foo.bar")];
+    p = await runRmProcess({ paths, options: ["-q"] });
     await checkProcess(p, { success: true, output: "", error: "" });
+    await assertDeleted(paths);
   } finally {
     await cleanTest(p);
   }
@@ -66,12 +85,13 @@ Deno.test("rm: path exist, quiet mode -> sucess without output", async () => {
 Deno.test("rm: path exist, no quiet -> sucess with output", async () => {
   let p;
   try {
-    const filePath = await makeFile("foo.bar");
-    p = await runRmProcess({ paths: [filePath] });
+    const paths = [await makeFile("foo.bar")];
+    p = await runRmProcess({ paths });
     await checkProcess(
       p,
-      { success: true, output: `Deleting ${filePath}\n`, error: "" },
+      { success: true, output: `Deleting ${paths[0]}\n`, error: "" },
     );
+    await assertDeleted(paths);
   } finally {
     await cleanTest(p);
   }
@@ -90,6 +110,7 @@ Deno.test("rm: nothing when path does not exist, quiet -> sucess without output"
         error: "",
       },
     );
+    await assertDeleted(paths);
   } finally {
     await cleanTest(p);
   }
@@ -108,6 +129,7 @@ Deno.test("rm: nothing when path does not exist, not quiet -> sucess with output
         error: "",
       },
     );
+    await assertDeleted(paths);
   } finally {
     await cleanTest(p);
   }
@@ -138,6 +160,27 @@ ${paths[4]} does not exist
         error: "",
       },
     );
+    await assertDeleted(paths);
+  } finally {
+    await cleanTest(p);
+  }
+});
+
+Deno.test("rm: dryRun -> nothing deleted", async () => {
+  let p;
+  try {
+    const paths = [await makeFile("foo.bar")];
+    const expectedOutput = `[Dry Run] Deleting ${paths[0]}\n`;
+    p = await runRmProcess({ paths, options: ["-d"] });
+    await checkProcess(
+      p,
+      {
+        success: true,
+        output: expectedOutput,
+        error: "",
+      },
+    );
+    assert(await exists(paths[0]));
   } finally {
     await cleanTest(p);
   }
