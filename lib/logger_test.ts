@@ -1,13 +1,13 @@
 import { setup } from "./Logger.ts";
-import { Log } from "../deps.ts";
 import { assertEquals } from "../dev_deps.ts";
+import { getLogger } from "../deps.ts";
 
 Deno.test("Logger: should set info level", async () => {
   await setup({ verbose: true });
-  assertEquals(Log.getLogger().levelName, "INFO");
+  assertEquals(getLogger().levelName, "INFO");
 });
 
 Deno.test("Logger: should set warning level", async () => {
   await setup({ verbose: false });
-  assertEquals(Log.getLogger().levelName, "WARNING");
+  assertEquals(getLogger().levelName, "WARNING");
 });

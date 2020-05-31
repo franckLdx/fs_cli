@@ -18,4 +18,4 @@ Syntax:
 fs-cli rm <path1> <path2> ... <pathN>
 ```
 Perform an rm -rf on each directory and file.
-If a path does not exist, ignore the path and process the next one.
+If a path does not exist, fs-cli ignores it and processes the next one.

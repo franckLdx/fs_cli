@@ -1,6 +1,5 @@
 import { Command } from "./deps.ts";
 import { rmCommand } from "./lib/rm.ts";
-import { setup } from "./lib/logger.ts";
 
 await new Command()
   .version("0.1.0")

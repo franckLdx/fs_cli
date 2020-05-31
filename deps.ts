@@ -1,4 +1,3 @@
-export { emptyDir } from "https://deno.land/std@0.54.0/fs/empty_dir.ts";
 export { exists } from "https://deno.land/std@0.54.0/fs/exists.ts";
 
 export {

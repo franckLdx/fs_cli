@@ -7,15 +7,16 @@ import {
 } from "../deps.ts";
 
 export async function setup(option: IFlags) {
+  const handlerName = "console";
   const verbose = option.verbose ?? false;
   const config: LoggerConfig = {
     level: verbose ? "INFO" : "WARNING",
-    handlers: ["console"],
+    handlers: [handlerName],
   };
   const handler = new SimpleHandler("DEBUG", { formatter });
   await setupLogger({
     handlers: {
-      console: handler,
+      [handlerName]: handler,
     },
     loggers: {
       default: config,
