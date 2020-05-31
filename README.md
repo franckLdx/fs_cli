@@ -11,6 +11,19 @@
 
 # Installation
 
+```sh
+$ deno install --allow-read --allow-write --allow-env --allow-run -n fs_cli https://raw.githubusercontent.com/franckLdx/fs_cli/master/cli.ts
+```
+The above command will always install the latest version. If you're updating from an older version you might need to run the command with the `-f` flag.
+
+### To install a specific version
+To install a specific version, run the install command with a specific version tag:
+
+```sh
+$ deno install --allow-read --allow-write --allow-env --allow-run -n fs_cli https://raw.githubusercontent.com/franckLdx/fs_cli@<version>/cli.ts
+```
+For more information see [Deno's installer manual](https://deno.land/manual/tools/script_installer)
+
 # Usage
 ## rm
 Syntax:
