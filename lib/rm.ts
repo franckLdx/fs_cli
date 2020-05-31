@@ -1,4 +1,4 @@
-import { IFlags, exists, getLogger, Command } from "../deps.ts";
+import { IFlags, exists, getLogger, Command, info } from "../deps.ts";
 import { setup } from "./logger.ts";
 
 export function addRmCommand(command: Command<any, any>) {
@@ -9,13 +9,19 @@ export function addRmCommand(command: Command<any, any>) {
 
 export async function rmCommand(options: IFlags, paths: string[]) {
   await setup(options);
-  const logger = getLogger();
+  const remove = removeHOF(options);
   for await (const path of paths) {
-    if (await exists(path)) {
-      logger.info(`Deleting ${path}`);
-      await Deno.remove(path, { recursive: true });
-    } else {
-      logger.info(`${path} does not exist`);
-    }
+    await remove(path);
   }
 }
+
+const removeHOF = (options: IFlags) => {
+  return async (path: string) => {
+    if (options.dryRun) {
+      info(`Shoudl delete ${path}`);
+    } else {
+      info(`Deleting ${path}`);
+      await Deno.remove(path, { recursive: true });
+    }
+  };
+};

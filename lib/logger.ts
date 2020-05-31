@@ -8,11 +8,10 @@ import {
 } from "../deps.ts";
 
 export function addLogOptions(command: Command<any, any>) {
-  return command
-    .option("-q, --quiet [quiet:boolean]", "quiet mode", {
-      default: false,
-      global: true,
-    });
+  return command.option("-q, --quiet [quiet:boolean]", "quiet mode", {
+    default: false,
+    global: true,
+  });
 }
 
 export async function setup(option: IFlags) {
