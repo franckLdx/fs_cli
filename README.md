@@ -3,6 +3,7 @@
 
  This first release implements only rm (delete list of files/directories), but will come soon:
 * add glob support
+* glob support: add includefiles, includeDir ad follow Symlinks options
 * Empty dir
 * Make dir
 * Copy files/directories
