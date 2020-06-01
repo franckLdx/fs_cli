@@ -56,13 +56,14 @@ const checkProcess = async (
     success,
     "process exit code is not the expected one",
   );
-  const actualOutput = new TextDecoder("utf-8").decode(await p.output());
+  const decoder = new TextDecoder("utf-8");
+  const actualOutput = decoder.decode(await p.output());
   assertEquals(
     actualOutput,
     output,
     "wrong process output",
   );
-  const actualError = new TextDecoder("utf-8").decode(await p.stderrOutput());
+  const actualError = decoder.decode(await p.stderrOutput());
   assertEquals(
     actualError,
     error,
