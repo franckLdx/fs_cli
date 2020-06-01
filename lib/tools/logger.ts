@@ -1,20 +1,12 @@
 import {
-  IFlags,
   LogRecord,
   BaseHandler,
   LoggerConfig,
   setupLogger,
-  Command,
-} from "../deps.ts";
+} from "../../deps.ts";
+import { Options } from "./options.ts";
 
-export function addLogOptions(command: Command<any, any>) {
-  return command.option("-q, --quiet [quiet:boolean]", "quiet mode", {
-    default: false,
-    global: true,
-  });
-}
-
-export async function configLog(option: IFlags) {
+export async function configLog(option: Options) {
   const handlerName = "console";
   const quiet = option.quiet ?? true;
   const config: LoggerConfig = {
@@ -35,13 +27,13 @@ export async function configLog(option: IFlags) {
   });
 }
 
-const getFormatter = (option: IFlags) => {
-  const stdformatter = ({ msg }: LogRecord): string => msg;
-  const DryRunFormatter = ({ msg }: LogRecord): string => `[Dry Run] ${msg}`;
-  return option.dry ? DryRunFormatter : stdformatter;
+const getFormatter = (option: Options) => {
+  return option.dry ? "[Dry Run] {msg}" : "{msg}";
 };
 
-class SimpleHandler extends BaseHandler {
+export class SimpleHandler extends BaseHandler {
+  public isSimpleHandled = true;
+
   format(logRecord: LogRecord): string {
     return super.format(logRecord);
   }
