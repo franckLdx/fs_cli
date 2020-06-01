@@ -4,20 +4,21 @@ export async function mapInputs(
   inputs: string[],
 ) {
   const paths: Array<string> = [];
+  const globs: Array<string> = [];
   for (const input of inputs) {
     if (isGlob(input)) {
-      paths.push(...await mapGlobToPath(input));
+      globs.push(input);
     } else {
       paths.push(input);
     }
   }
-  return paths;
+  return [...paths, ...await mapGlobToPath(globs)];
 }
 
-const mapGlobToPath = async (glob: string) => {
+const mapGlobToPath = async (globs: Array<string>) => {
   const paths = [];
-  const regExp = globToRegExp(glob);
-  for await (const entry of walk(".", { match: [regExp] })) {
+  const regExps = globs.map((glob) => globToRegExp(glob));
+  for await (const entry of walk(".", { match: regExps })) {
     paths.push(entry.path);
   }
   return paths;
