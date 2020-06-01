@@ -1,4 +1,4 @@
-import { IFlags, exists, Command, info } from "../deps.ts";
+import { IFlags, exists, Command, getLogger } from "../deps.ts";
 import { configLog } from "./tools/logger.ts";
 import { Options, isOptions } from "./tools/options.ts";
 
@@ -22,14 +22,15 @@ export async function rmCommand(options: IFlags, paths: string[]) {
 }
 
 const removeHOF = (options: Options) => {
+  const logger = getLogger();
   return async (path: string) => {
     if (await exists(path)) {
-      info(`Deleting ${path}`);
+      logger.info(`Deleting ${path}`);
       if (!options.dry) {
         await Deno.remove(path, { recursive: true });
       }
     } else {
-      info(`${path} does not exist`);
+      logger.info(`${path} does not exist`);
     }
   };
 };

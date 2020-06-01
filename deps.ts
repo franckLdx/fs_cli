@@ -3,8 +3,6 @@ export { exists } from "https://deno.land/std@0.54.0/fs/exists.ts";
 export {
   setup as setupLogger,
   getLogger,
-  info,
-  warning,
   LoggerConfig,
 } from "https://deno.land/std@0.54.0/log/mod.ts";
 export { BaseHandler } from "https://deno.land/std@0.54.0/log/handlers.ts";
