@@ -12,12 +12,21 @@ import { mapInputs } from "./tools/inputs.ts";
 export function addRmCommand(command: Command<any, any>) {
   return command
     .command("rm <paths...:string>")
-    // .option("-r, --root [root:string] root directory for the glob")
+    .option(
+      "-r, --root [root:string]",
+      "root for the glob search",
+      { default: "." },
+    )
     .action(rmCommand);
 }
 
+type RmOptions = Options & { root: string };
+
+const isRmOptions = (options: any): options is RmOptions =>
+  isOptions(options) && "root" in options;
+
 export async function rmCommand(options: IFlags, inputs: string[]) {
-  if (!isOptions(options)) {
+  if (!isRmOptions(options)) {
     throw new Error(
       `Receive invalid command line options: ${JSON.stringify(options)}`,
     );
@@ -27,7 +36,7 @@ export async function rmCommand(options: IFlags, inputs: string[]) {
   const logger = getLogger();
   const remove = removeHOF(logger, options);
 
-  const paths = await mapInputs(".", inputs);
+  const paths = await mapInputs(options.root, inputs);
 
   for await (const path of paths) {
     await remove(path);
