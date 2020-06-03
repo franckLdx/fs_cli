@@ -1,8 +1,14 @@
 import { isGlob, globToRegExp, walk } from "../../deps.ts";
 
+export interface InputOptions {
+  root: string;
+  dirs: boolean;
+  files: boolean;
+}
+
 export async function mapInputs(
-  root: string,
   inputs: string[],
+  options: InputOptions,
 ) {
   const paths: Array<string> = [];
   const globs: Array<string> = [];
@@ -13,13 +19,21 @@ export async function mapInputs(
       paths.push(input);
     }
   }
-  return [...paths, ...await mapGlobToPath(root, globs)];
+  return [...paths, ...await mapGlobToPath(globs, options)];
 }
 
-const mapGlobToPath = async (root: string, globs: Array<string>) => {
+const mapGlobToPath = async (
+  globs: Array<string>,
+  { root, dirs, files }: InputOptions,
+) => {
   const paths = [];
   const regExps = globs.map((glob) => globToRegExp(glob));
-  for await (const entry of walk(root, { match: regExps })) {
+  for await (
+    const entry of walk(
+      root,
+      { match: regExps, includeDirs: dirs, includeFiles: files },
+    )
+  ) {
     paths.push(entry.path);
   }
   return paths;

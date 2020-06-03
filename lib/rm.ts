@@ -6,24 +6,39 @@ import {
   Logger,
 } from "../deps.ts";
 import { configLog } from "./tools/logger.ts";
-import { Options, isOptions } from "./tools/options.ts";
-import { mapInputs } from "./tools/inputs.ts";
+import { Options, isGlobalOptions, isOptions } from "./tools/options.ts";
+import { mapInputs, InputOptions } from "./tools/inputs.ts";
 
 export function addRmCommand(command: Command<any, any>) {
   return command
     .command("rm <paths...:string>")
     .option(
-      "-r, --root [root:string]",
+      "--root [root:string]",
       "root for the glob search",
       { default: "." },
+    )
+    .option(
+      "--dirs [dirs:boolean]",
+      "include directories",
+      { default: true },
+    )
+    .option(
+      "--files [files:boolean]",
+      "include files",
+      { default: true },
     )
     .action(rmCommand);
 }
 
-type RmOptions = Options & { root: string };
+type RmOptions = Options & InputOptions;
 
 const isRmOptions = (options: any): options is RmOptions =>
-  isOptions(options) && "root" in options;
+  isOptions<RmOptions, keyof InputOptions>(
+    options,
+    "root",
+    "dirs",
+    "files",
+  );
 
 export async function rmCommand(options: IFlags, inputs: string[]) {
   if (!isRmOptions(options)) {
@@ -31,12 +46,15 @@ export async function rmCommand(options: IFlags, inputs: string[]) {
       `Receive invalid command line options: ${JSON.stringify(options)}`,
     );
   }
+  if (!options.dirs && !options.files) {
+    throw new Error("Without files and dirs, won't find much to delete !");
+  }
 
   await configLog(options);
   const logger = getLogger();
   const remove = removeHOF(logger, options);
 
-  const paths = await mapInputs(options.root, inputs);
+  const paths = await mapInputs(inputs, options);
 
   for await (const path of paths) {
     await remove(path);
