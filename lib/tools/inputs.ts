@@ -1,6 +1,7 @@
 import { isGlob, globToRegExp, walk } from "../../deps.ts";
 
 export async function mapInputs(
+  root: string,
   inputs: string[],
 ) {
   const paths: Array<string> = [];
@@ -12,13 +13,13 @@ export async function mapInputs(
       paths.push(input);
     }
   }
-  return [...paths, ...await mapGlobToPath(globs)];
+  return [...paths, ...await mapGlobToPath(root, globs)];
 }
 
-const mapGlobToPath = async (globs: Array<string>) => {
+const mapGlobToPath = async (root: string, globs: Array<string>) => {
   const paths = [];
   const regExps = globs.map((glob) => globToRegExp(glob));
-  for await (const entry of walk(".", { match: regExps })) {
+  for await (const entry of walk(root, { match: regExps })) {
     paths.push(entry.path);
   }
   return paths;

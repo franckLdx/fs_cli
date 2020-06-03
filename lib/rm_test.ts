@@ -1,14 +1,6 @@
-import { ensureDir, ensureFile, assertEquals, assert } from "../dev_deps.ts";
+import { assertEquals, assert } from "../dev_deps.ts";
 import { exists } from "../deps.ts";
-
-const dirPath = `./test-resource`;
-
-const makeFile = async (fileName: string) => {
-  const filePath = `${dirPath}/${fileName}`;
-  await ensureDir(dirPath);
-  await ensureFile(filePath);
-  return filePath;
-};
+import { makeFile, makeDirectory, cleanDir } from "./tools/tests.ts";
 
 const runRmProcess = async (
   { paths, options }: { paths: string[]; options?: string[] },
@@ -31,9 +23,7 @@ const runRmProcess = async (
 const cleanTest = async (p: Deno.Process | undefined) => {
   p?.stdin?.close();
   p?.close();
-  if (await exists(dirPath)) {
-    await Deno.remove(dirPath, { recursive: true });
-  }
+  await cleanDir();
 };
 
 const assertDeleted = async (paths: string[]) => {
@@ -138,6 +128,7 @@ Deno.test("rm: nothing when path does not exist, not quiet -> sucess with output
 
 Deno.test("rm: mix path that exist and path that exist", async () => {
   let p;
+  const dir = await makeDirectory();
   try {
     const paths = await Promise.all([
       makeFile("foo.bar1"),

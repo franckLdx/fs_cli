@@ -12,6 +12,7 @@ import { mapInputs } from "./tools/inputs.ts";
 export function addRmCommand(command: Command<any, any>) {
   return command
     .command("rm <paths...:string>")
+    // .option("-r, --root [root:string] root directory for the glob")
     .action(rmCommand);
 }
 
@@ -26,7 +27,7 @@ export async function rmCommand(options: IFlags, inputs: string[]) {
   const logger = getLogger();
   const remove = removeHOF(logger, options);
 
-  const paths = await mapInputs(inputs);
+  const paths = await mapInputs(".", inputs);
 
   for await (const path of paths) {
     await remove(path);
