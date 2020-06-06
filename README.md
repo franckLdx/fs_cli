@@ -2,13 +2,15 @@
  A deno tool to handle directories a files. Inspired by [rimraf](https://www.npmjs.com/package/rimraf) and [mkdirp](https://www.npmjs.com/package/mkdirp), fs-cli aims to write build scripts that can run under any shells.
 
  This first release implements only rm (delete list of files/directories), but will come soon:
-* add glob support
-* glob support: add includefiles, includeDir ad follow Symlinks options
-* Empty dir
-* Make dir
-* Copy files/directories
-* Move files/directories
-* Rename files/directories
+  * add glob support
+  * glob support: add includefiles, includeDir 
+  * add follow Symlinks options
+  * Empty dir
+  * Make dir
+  * Copy files/directories
+  * Move files/directories
+  * Rename files/directories
+  * rm: Add totoal count (or at least an error message when found nothing to delete)
 
 # Installation
 
@@ -29,12 +31,15 @@ For more information see [Deno's installer manual](https://deno.land/manual/tool
 ## rm
 Syntax:
 ```
-fs-cli rm <path1> <path2> ... <pathN>
+fs-cli rm <path or glob 1> <path or glob 2> ... <path or glob N> [--root <path>] [--dirs <true|false|0|1>] [--files <true|false|0|1>]
 ```
 Perform an rm -rf on each directory and file.
 If a path does not exist, fs-cli ignores it and processes the next one.
 
 ## Options
+### root
+root search for glob
+###
 ### quiet mode
 Output can be disable using -q/--quiet option:
 ```

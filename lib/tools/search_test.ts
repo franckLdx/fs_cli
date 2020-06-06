@@ -1,15 +1,15 @@
-import { mapInputs } from "./inputs.ts";
 import { assertEquals } from "../../dev_deps.ts";
 import { makeFile, makeDirectory, cleanDir } from "./tests.ts";
+import { search } from "./search.ts";
 
-const sortByPath = (paths: Array<string>) =>
-  paths
-    .map((path) => path.replace("/", "\\")) // at that time of wring deno mix / and \\ in path
+export function sortPath(paths: Array<string>) {
+  return paths
     .sort();
+}
 
 Deno.test("Inputs: with paths only should return all paths", async () => {
   const inputs = ["foo.json", "bar.ts"];
-  const actualPaths = await mapInputs(
+  const actualPaths = await search(
     inputs,
     { root: ".", includeFiles: true, includeDirs: true },
   );
@@ -26,11 +26,11 @@ Deno.test("Inputs: with globs only should return all paths", async () => {
         makeFile("bar.json"),
       ],
     );
-    const actualPaths = await mapInputs(
+    const actualPaths = await search(
       ["**/*.json"],
       { root: dirPath, includeFiles: true, includeDirs: true },
     );
-    assertEquals(actualPaths, sortByPath(paths));
+    assertEquals(actualPaths, sortPath(paths));
   } finally {
     await cleanDir();
   }
@@ -48,11 +48,11 @@ Deno.test("Inputs: with globs and input should return all paths", async () => {
       makeFile("bar.json"),
     ]);
     await makeFile("baz.ts");
-    const actualPaths = await mapInputs(
+    const actualPaths = await search(
       [...inputs, "**/*.json"],
       { root: dirPath, includeFiles: true, includeDirs: true },
     );
-    assertEquals(actualPaths, [...inputs, ...sortByPath(paths)]);
+    assertEquals(actualPaths, [...inputs, ...sortPath(paths)]);
   } finally {
     await cleanDir();
   }

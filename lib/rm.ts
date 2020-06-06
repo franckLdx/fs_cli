@@ -6,70 +6,76 @@ import {
   Logger,
 } from "../deps.ts";
 import { configLog } from "./tools/logger.ts";
-import { Options, isGlobalOptions, isOptions } from "./tools/options.ts";
-import { mapInputs, InputOptions } from "./tools/inputs.ts";
+import {
+  GlobalOptions,
+  assertValidCliOptions,
+} from "./tools/options.ts";
+import { search, SearchOptions } from "./tools/search.ts";
 
 export function addRmCommand(command: Command<any, any>) {
   return command
     .command("rm <paths...:string>")
     .option(
-      "--root [root:string]",
+      "--glob-root [glob-root:string]",
       "root for the glob search",
       { default: "." },
     )
     .option(
-      "--dirs [dirs:boolean]",
-      "include directories",
+      "--glob-dirs [glob-dirs:boolean]",
+      "include directories in the glob search",
       { default: true },
     )
     .option(
-      "--files [files:boolean]",
-      "include files",
+      "--glob-files [glob-files:boolean]",
+      "include files in the glob search",
       { default: true },
     )
     .action(rmCommand);
 }
 
-type RmOptions = Options & InputOptions;
-
-const isRmOptions = (options: any): options is RmOptions =>
-  isOptions<RmOptions, keyof InputOptions>(
-    options,
-    "root",
-    "dirs",
-    "files",
-  );
+type RmOptions = GlobalOptions & SearchOptions;
 
 export async function rmCommand(options: IFlags, inputs: string[]) {
-  if (!isRmOptions(options)) {
-    throw new Error(
-      `Receive invalid command line options: ${JSON.stringify(options)}`,
-    );
-  }
-  if (!options.dirs && !options.files) {
-    throw new Error("Without files and dirs, won't find much to delete !");
-  }
+  const rmOptions = parseCliOptions(options);
 
-  await configLog(options);
+  await configLog(rmOptions);
   const logger = getLogger();
-  const remove = removeHOF(logger, options);
+  const remove = removeHOF(logger, rmOptions);
 
-  const paths = await mapInputs(inputs, options);
+  const paths = await search(inputs, rmOptions);
 
   for await (const path of paths) {
     await remove(path);
   }
 }
 
-const removeHOF = (logger: Logger, { dry }: Options) => {
+const removeHOF = (logger: Logger, { dry }: GlobalOptions) => {
   return async (path: string) => {
     if (await exists(path)) {
       logger.info(`Deleting ${path}`);
       if (!dry) {
         await Deno.remove(path, { recursive: true });
       }
-    } else {
-      logger.info(`${path} does not exist`);
     }
   };
+};
+
+const parseCliOptions = (options: any): RmOptions => {
+  assertValidCliOptions(
+    options,
+    "globRoot",
+    "globDirs",
+    "globFiles",
+  );
+  const rmOptions = {
+    dry: options["dry"] as boolean,
+    quiet: options["quiet"] as boolean,
+    root: options["globRoot"] as string,
+    includeDirs: options["globDirs"] as boolean,
+    includeFiles: options["globFiles"] as boolean,
+  };
+  if (!rmOptions.includeFiles && !rmOptions.includeDirs) {
+    throw new Error("Without files and dirs, won't find much to delete !");
+  }
+  return rmOptions;
 };

@@ -1,5 +1,5 @@
 import { ensureFile } from "../../dev_deps.ts";
-import { exists } from "../../deps.ts";
+import { exists, SEP } from "../../deps.ts";
 
 let tmpDirectory: string | undefined;
 
@@ -12,7 +12,7 @@ export async function makeFile(fileName: string) {
   if (!tmpDirectory) {
     await makeDirectory();
   }
-  const filePath = `${tmpDirectory}/${fileName}`;
+  const filePath = `${tmpDirectory}${SEP}${fileName}`;
   await ensureFile(filePath);
   return filePath;
 }

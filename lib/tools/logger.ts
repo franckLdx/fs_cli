@@ -4,9 +4,9 @@ import {
   LoggerConfig,
   setupLogger,
 } from "../../deps.ts";
-import { Options } from "./options.ts";
+import { GlobalOptions } from "./options.ts";
 
-export async function configLog(option: Options) {
+export async function configLog(option: GlobalOptions) {
   const handlerName = "console";
   const quiet = option.quiet ?? true;
   const config: LoggerConfig = {
@@ -27,7 +27,7 @@ export async function configLog(option: Options) {
   });
 }
 
-const getFormatter = (option: Options) => {
+const getFormatter = (option: GlobalOptions) => {
   return option.dry ? "[Dry Run] {msg}" : "{msg}";
 };
 
