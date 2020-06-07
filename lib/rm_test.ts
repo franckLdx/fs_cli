@@ -1,6 +1,11 @@
 import { assertEquals, assert, green, red } from "../dev_deps.ts";
 import { exists } from "../deps.ts";
-import { makeFile, makeDirectory, cleanDir } from "./tools/tests.ts";
+import {
+  makeFile,
+  makeDirectory,
+  cleanDir,
+  makeSubDirectory,
+} from "./tools/tests.ts";
 import { sortPath } from "./tools/search_test.ts";
 
 const getDeletingMsgs = (paths: string[], dryRun = false) => {
@@ -200,14 +205,40 @@ Deno.test("rm: glob excluding files", async () => {
   let p;
   try {
     const dirPath = await makeDirectory();
-    const expectedPaths = (await Promise.all([
-      makeFile("foo1.bar"),
-      makeFile("foo2.bar"),
-    ])).map((path) => `Deleting ${path}\n`);
     p = await runRmProcess(
       {
         paths: ["**/*.bar"],
         options: ["--glob-root", dirPath, "--no-glob-files"],
+      },
+    );
+    await checkProcess(
+      p,
+      {
+        success: true,
+        expectedOutput: "",
+        expectedError: "",
+      },
+    );
+  } finally {
+    await cleanTest(p);
+  }
+});
+
+Deno.test("rm: glob excluding dirs", async () => {
+  let p;
+  try {
+    const dirPath = await makeDirectory();
+    const subDirPaths = await Promise.all(
+      [
+        makeSubDirectory("foo"),
+        makeSubDirectory("fooBar"),
+        makeSubDirectory("fooBaz"),
+      ],
+    );
+    p = await runRmProcess(
+      {
+        paths: [`**/foo*`],
+        options: ["--glob-root", dirPath, "--no-glob-dirs"],
       },
     );
     await checkProcess(
