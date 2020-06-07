@@ -1,32 +1,24 @@
-import { sortPath } from "../search_test.ts";
 import { assertEquals, green, red } from "../../../dev_deps.ts";
 
-export function getDeletingMsgs(paths: string[], dryRun = false) {
-  const prefix = dryRun ? "[Dry Run] " : "";
-  const sortedPath = sortPath(paths);
-  return sortedPath.reduce(
-    (acc, path) => acc + `${prefix}Deleting ${path}\n`,
-    "",
-  );
-}
-
-export async function runRmProcess(
-  { paths, options }: { paths: string[]; options?: string[] },
-) {
-  return await Deno.run({
-    cmd: [
-      "deno",
-      "run",
-      "--allow-read",
-      "--allow-write",
-      "cli.ts",
-      "rm",
-      ...paths,
-      ...options ?? "",
-    ],
-    stdout: "piped",
-    stderr: "piped",
-  });
+export function runProcess(command: string) {
+  return async (
+    { paths, options }: { paths: string[]; options?: string[] },
+  ) => {
+    return await Deno.run({
+      cmd: [
+        "deno",
+        "run",
+        "--allow-read",
+        "--allow-write",
+        "cli.ts",
+        command,
+        ...paths,
+        ...options ?? "",
+      ],
+      stdout: "piped",
+      stderr: "piped",
+    });
+  };
 }
 
 export async function checkProcess(
