@@ -80,6 +80,7 @@ Deno.test("rm: path exist, quiet mode -> sucess without output", async () => {
   let p: Deno.Process | undefined;
   try {
     const paths = [await makeFile("foo.bar")];
+    const expectedOutput = getDeletingMsgs(paths, true);
     p = await runRmProcess({ paths, options: ["-q"] });
     await checkProcess(
       p,
