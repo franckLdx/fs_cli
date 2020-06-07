@@ -1,5 +1,6 @@
 import { Command } from "./deps.ts";
 import { addRmCommand } from "./lib/rm.ts";
+import { addMkDirpCommand } from "./lib/mkdirp.ts";
 import { addGlobalOptions } from "./lib/tools/options.ts";
 
 const command = new Command()
@@ -8,5 +9,6 @@ const command = new Command()
 
 addGlobalOptions(command);
 addRmCommand(command);
+addMkDirpCommand(command);
 
 await command.parse(Deno.args);

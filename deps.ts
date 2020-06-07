@@ -1,3 +1,4 @@
+export { ensureDir } from "https://deno.land/std@0.55.0/fs/ensure_dir.ts";
 export { exists } from "https://deno.land/std@0.55.0/fs/exists.ts";
 export { walk } from "https://deno.land/std@0.55.0/fs/walk.ts";
 
