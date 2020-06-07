@@ -1,6 +1,6 @@
 import { Command, ICommandOption } from "../../deps.ts";
 
-export interface Options {
+export interface GlobalOptions {
   dry: boolean;
   quiet: boolean;
 }
@@ -15,6 +15,13 @@ export function addGlobalOptions(command: Command<any, any>) {
     .option("-q, --quiet [quiet:boolean]", "quiet mode", opts);
 }
 
-export function isOptions(options: any): options is Options {
-  return "quiet" in options && "dry" in options;
+export function assertValidCliOptions<T>(
+  options: any,
+  ...keys: Array<string>
+) {
+  for (const key of ["quiet", "dry", ...keys]) {
+    if (!(key in options)) {
+      throw new Error(`cli options not valid, missing ${key}`);
+    }
+  }
 }
