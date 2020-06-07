@@ -31,14 +31,22 @@ For more information see [Deno's installer manual](https://deno.land/manual/tool
 ## rm
 Syntax:
 ```
-fs-cli rm <path or glob 1> <path or glob 2> ... <path or glob N> [--root <path>] [--dirs <true|false|0|1>] [--files <true|false|0|1>]
+fs-cli rm <path or glob 1> <path or glob 2> ... <path or glob N> [--glob-root <path>] [--no-glob-dirs] [--no-glob-files]
 ```
 Perform an rm -rf on each directory and file.
 If a path does not exist, fs-cli ignores it and processes the next one.
+**With glob, don't forget to use quote to avoid glob being interpreted by sheel use quote: <code>'\*\*/*.tmp'</code> rahter than <code>\*\*/*.tmp**</code>
 
 ## Options
-### root
+### glob-root
 root search for glob
+
+### no-glob-dirs
+Directories are ignored when applying a glob
+
+### no-glob-files
+files are ignored when applying a glob
+
 ###
 ### quiet mode
 Output can be disable using -q/--quiet option:
