@@ -22,12 +22,12 @@ export function addRmCommand(command: Command<any, any>) {
     )
     .option(
       "--glob-dirs [glob-dirs:boolean]",
-      "include directories in the glob search",
+      "include directories in the glob search (--no-glob-dirs is the same than --glob-dirs false)",
       { default: true },
     )
     .option(
       "--glob-files [glob-files:boolean]",
-      "include files in the glob search",
+      "include files in the glob search (--no-glob-files is the same than --glob-files false)",
       { default: true },
     )
     .action(rmCommand);
