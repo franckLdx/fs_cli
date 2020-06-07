@@ -1,5 +1,5 @@
 import { assertEquals } from "../../dev_deps.ts";
-import { makeFile, makeDirectory, cleanDir } from "./tests.ts";
+import { makeFile, makeDirectory, cleanDir } from "./test/fs.ts";
 import { search } from "./search.ts";
 
 export function sortPath(paths: Array<string>) {

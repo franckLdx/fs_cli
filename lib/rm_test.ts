@@ -1,86 +1,29 @@
-import { assertEquals, assert, green, red } from "../dev_deps.ts";
+import { assert } from "../dev_deps.ts";
 import { exists } from "../deps.ts";
 import {
   makeFile,
   makeDirectory,
   cleanDir,
   makeSubDirectory,
-} from "./tools/tests.ts";
-import { sortPath } from "./tools/search_test.ts";
+  assertDeleted,
+} from "./tools/test/fs.ts";
+import {
+  checkProcess,
+  cleanProcess,
+  getDeletingMsgs,
+  runRmProcess,
+} from "./tools/test/process.ts";
 
-const getDeletingMsgs = (paths: string[], dryRun = false) => {
-  const prefix = dryRun ? "[Dry Run] " : "";
-  const sortedPath = sortPath(paths);
-  return sortedPath.reduce(
-    (acc, path) => acc + `${prefix}Deleting ${path}\n`,
-    "",
-  );
-};
-
-const runRmProcess = async (
-  { paths, options }: { paths: string[]; options?: string[] },
-) =>
-  await Deno.run({
-    cmd: [
-      "deno",
-      "run",
-      "--allow-read",
-      "--allow-write",
-      "cli.ts",
-      "rm",
-      ...paths,
-      ...options ?? "",
-    ],
-    stdout: "piped",
-    stderr: "piped",
-  });
-
-const cleanTest = async (p: Deno.Process | undefined) => {
-  p?.stdin?.close();
-  p?.close();
-  await cleanDir();
-};
-
-const assertDeleted = async (paths: string[]) => {
-  for await (const path of paths) {
-    assert(!(await exists(path)));
-  }
-};
-
-const checkProcess = async (
-  p: Deno.Process,
-  { success, expectedOutput, expectedError }: {
-    success: boolean;
-    expectedOutput: string;
-    expectedError: string;
-  },
-) => {
-  const { success: actualSuccess } = await p.status();
-  assertEquals(
-    actualSuccess,
-    success,
-    "process exit code is not the expected one",
-  );
-  const decoder = new TextDecoder("utf-8");
-  const actualOutput = decoder.decode(await p.output());
-  assertEquals(
-    actualOutput,
-    expectedOutput,
-    `wrong process std output ${green(actualOutput)}!=${red(expectedOutput)}`,
-  );
-  const actualError = decoder.decode(await p.stderrOutput());
-  assertEquals(
-    actualError,
-    expectedError,
-    `wrong proces error ${green(actualError)}!=${red(expectedError)}`,
-  );
-};
+const cleanTest = async (p: Deno.Process | undefined) =>
+  Promise.all([
+    cleanProcess(p),
+    cleanDir(),
+  ]);
 
 Deno.test("rm: path exist, quiet mode -> sucess without output", async () => {
   let p: Deno.Process | undefined;
   try {
     const paths = [await makeFile("foo.bar")];
-    const expectedOutput = getDeletingMsgs(paths, true);
     p = await runRmProcess({ paths, options: ["-q"] });
     await checkProcess(
       p,
@@ -166,7 +109,7 @@ Deno.test("rm: mix path that exist and path that exist", async () => {
       p,
       {
         success: true,
-        expectedOutput: expectedOutput,
+        expectedOutput,
         expectedError: "",
       },
     );
@@ -192,7 +135,7 @@ Deno.test("rm: glob", async () => {
       p,
       {
         success: true,
-        expectedOutput: expectedOutput,
+        expectedOutput,
         expectedError: "",
       },
     );
@@ -229,7 +172,7 @@ Deno.test("rm: glob excluding dirs", async () => {
   let p;
   try {
     const dirPath = await makeDirectory();
-    const subDirPaths = await Promise.all(
+    await Promise.all(
       [
         makeSubDirectory("foo"),
         makeSubDirectory("fooBar"),
@@ -265,7 +208,7 @@ Deno.test("rm: dryRun -> nothing deleted", async () => {
       p,
       {
         success: true,
-        expectedOutput: expectedOutput,
+        expectedOutput,
         expectedError: "",
       },
     );

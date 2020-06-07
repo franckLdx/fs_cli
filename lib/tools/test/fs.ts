@@ -1,5 +1,5 @@
-import { ensureFile, ensureDir } from "../../dev_deps.ts";
-import { exists, SEP } from "../../deps.ts";
+import { ensureFile, ensureDir, assert } from "../../../dev_deps.ts";
+import { exists, SEP } from "../../../deps.ts";
 
 let tmpDirectory: string | undefined;
 
@@ -29,6 +29,12 @@ export async function cleanDir() {
   if (await exists(tmpDirectory)) {
     await Deno.remove(tmpDirectory, { recursive: true });
     tmpDirectory = undefined;
+  }
+}
+
+export async function assertDeleted(paths: string[]) {
+  for await (const path of paths) {
+    assert(!(await exists(path)));
   }
 }
 
