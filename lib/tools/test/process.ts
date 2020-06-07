@@ -1,5 +1,9 @@
 import { assertEquals, green, red } from "../../../dev_deps.ts";
 
+export function getPrefixMessage(dryRun: boolean) {
+  return dryRun ? "[Dry Run] " : "";
+}
+
 export function runProcess(command: string) {
   return async (
     { paths, options }: { paths: string[]; options?: string[] },

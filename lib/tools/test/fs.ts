@@ -1,4 +1,9 @@
-import { ensureFile, ensureDir, assert } from "../../../dev_deps.ts";
+import {
+  ensureFile,
+  ensureDir,
+  assert,
+  assertEquals,
+} from "../../../dev_deps.ts";
 import { exists, SEP } from "../../../deps.ts";
 
 let tmpDirectory: string | undefined;
@@ -32,9 +37,9 @@ export async function cleanDir() {
   }
 }
 
-export async function assertDeleted(paths: string[]) {
+export async function assertExists(paths: string[], exist = true) {
   for await (const path of paths) {
-    assert(!(await exists(path)));
+    assertEquals(await exists(path), exist);
   }
 }
 

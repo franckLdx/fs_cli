@@ -4,19 +4,21 @@ import {
   makeFile,
   makeDirectory,
   makeSubDirectory,
-  assertDeleted,
+  assertExists,
 } from "./tools/test/fs.ts";
 import { cleanTest } from "./tools/test/misc.ts";
 import {
   checkProcess,
   runProcess,
+  getPrefixMessage,
 } from "./tools/test/process.ts";
 import { sortPath } from "./tools/search_test.ts";
 
 const runRmProcess = runProcess("rm");
+const assertDeleted = (paths: string[]) => assertExists(paths, false);
 
 export function getDeletingMsgs(paths: string[], dryRun = false) {
-  const prefix = dryRun ? "[Dry Run] " : "";
+  const prefix = getPrefixMessage(dryRun);
   const sortedPath = sortPath(paths);
   return sortedPath.reduce(
     (acc, path) => acc + `${prefix}Deleting ${path}\n`,
@@ -33,7 +35,7 @@ Deno.test("rm: path exist, quiet mode -> sucess without output", async () => {
       p,
       { success: true, expectedOutput: "", expectedError: "" },
     );
-    await assertDeleted(paths);
+    await assertExists(paths, false);
   } finally {
     await cleanTest(p);
   }

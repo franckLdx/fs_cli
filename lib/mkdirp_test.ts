@@ -1,12 +1,16 @@
 import { SEP } from "../deps.ts";
 import { makeDirectory } from "./tools/test/fs.ts";
-import { runProcess, checkProcess } from "./tools/test/process.ts";
+import {
+  runProcess,
+  checkProcess,
+  getPrefixMessage,
+} from "./tools/test/process.ts";
 import { cleanTest } from "./tools/test/misc.ts";
 
 const runMkProcess = runProcess("mkdirp");
 
 export function getCreatingMsgs(paths: string[], dryRun = false) {
-  const prefix = dryRun ? "[Dry Run] " : "";
+  const prefix = getPrefixMessage(dryRun);
   return paths.reduce(
     (acc, path) => acc + `${prefix}Creating ${path}\n`,
     "",
