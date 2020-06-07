@@ -1,5 +1,5 @@
 # fs-cli
- A deno tool to handle directories a files. Inspired by [rimraf](https://www.npmjs.com/package/rimraf) and [mkdirp](https://www.npmjs.com/package/mkdirp), fs-cli aims to write build scripts that can run under any shells.
+ A deno tool to handle directories a files. Inspired by rimraf ([npm's riraf](https://www.npmjs.com/package/rimraf)) and mkdirp ([npm's mkdirp](https://www.npmjs.com/package/mkdirp)), fs-cli aims to write build scripts that can run under any shells.
 
  This first release implements only rm command, but more will come soon:
   * add follow Symlinks options to glob search
