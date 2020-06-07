@@ -1,5 +1,5 @@
 # fs-cli
- A deno tool to handle directories a files. Inspired by rimraf ([npm's riraf](https://www.npmjs.com/package/rimraf)) and mkdirp ([npm's mkdirp](https://www.npmjs.com/package/mkdirp)), fs-cli aims to write build scripts that can run under any shells.
+ A deno tool to handle directories a files. Inspired by [rimraf](https://www.npmjs.com/package/rimraf) and mkdirp [mkdirp](https://www.npmjs.com/package/mkdirp), fs-cli aims to write build scripts that can run under any shells.
 
  This first release implements only rm command, but more will come soon:
   * add follow Symlinks options to glob search
@@ -25,7 +25,7 @@ $ deno install --allow-read --allow-write --allow-env --allow-run -n fs_cli http
 ```
 For more information see [Deno's installer manual](https://deno.land/manual/tools/script_installer)
 
-# Usage
+# Command
 ## rm
 Syntax:
 ```
@@ -36,27 +36,33 @@ If a path does not exist, fs-cli ignores it and processes the next one.
 
 **With glob, don't forget to use quote to avoid glob being interpreted by sheel use quote: <code>'\*\*/*.tmp'</code> rahter than <code>\*\*/*.tmp**</code>
 
-## Options
-### glob-root
+### Options
+#### glob-root
 root search for glob
 ```
 fs-cli rm <path or glob 1>...<path or glob N> --glob-root <path>
 ```
 
-### no-glob-dirs
+#### no-glob-dirs
 Directories are ignored when applying a glob
 ```
 fs-cli rm <path or glob 1>...<path or glob N> --no-glob-dirs
 ```
 
-### no-glob-files
+#### no-glob-files
 files are ignored when applying a glob
 ```
 fs-cli rm <path or glob 1>...<path or glob N> --no-glob-files
 ```
+## mkdirp
+Syntax:
+```
+fs-cli mkdirp <path1> <path2> <path3>
+```
+Perform an mkdir -p on each given directory.
 
-###
-### quiet mode
+# Global options
+## quiet mode
 Output can be disable using -q/--quiet option:
 ```
 fs-cli rm <path1> <path2> ... <pathN> -q
