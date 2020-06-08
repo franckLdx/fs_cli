@@ -12,6 +12,7 @@ export {
   setup as setupLogger,
   getLogger,
   LoggerConfig,
+  handlers,
 } from "https://deno.land/std@0.55.0/log/mod.ts";
 export {
   Logger,
