@@ -1,20 +1,19 @@
 # fs-cli
  A deno tool to handle directories a files. Inspired by [rimraf](https://www.npmjs.com/package/rimraf) and mkdirp [mkdirp](https://www.npmjs.com/package/mkdirp), fs-cli aims to write build scripts that can run under any shells.
 
- This first release implements only rm command, but more will come soon:
-  * add follow Symlinks options to glob search
-  * add Ensure dir commands
-  * add Make dir commands
+ Current release implements [rm](#rm) and [mkdir](#mkdirp) commands, but more will come soon:
+  * add Empty dir commands
   * add Copy commands
   * add Move commands
   * add Rename commands
-  * Add messages at the end of execution (total number of deletion:copy...)
+  * add messages at the end of execution (total number of deletion:copy...)
+  * add follow Symlinks options to glob search
 
 # Installation
 
 ```sh
 $ deno install --allow-read --allow-write --allow-env --allow-run -n fs_cli https://deno.land/x/fs_cli@v0.1.0/cli.ts
-```
+```mkdirp
 The above command will always install the latest version. If you're updating from an older version you might need to run the command with the `-f` flag.
 
 ### To install a specific version
