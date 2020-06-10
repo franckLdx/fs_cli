@@ -20,9 +20,8 @@ const assertDeleted = (paths: string[]) => assertExists(paths, false);
 export function getDeletingMsgs(paths: string[], dryRun = false) {
   const prefix = getPrefixMessage(dryRun);
   const sortedPath = sortPath(paths);
-  return sortedPath.reduce(
-    (acc, path) => acc + `${prefix}Deleting ${path}\n`,
-    "",
+  return sortedPath.map(
+    (path) => `${prefix}Deleting ${path}`,
   );
 }
 
@@ -33,7 +32,7 @@ Deno.test("rm: path exist, quiet mode -> sucess without output", async () => {
     p = await runRmProcess({ paths, options: ["-q"] });
     await checkProcess(
       p,
-      { success: true, expectedOutput: "", expectedError: "" },
+      { success: true, expectedOutputs: [""], expectedErrors: [""] },
     );
     await assertExists(paths, false);
   } finally {
@@ -50,8 +49,8 @@ Deno.test("rm: path exist, no quiet -> sucess with output", async () => {
       p,
       {
         success: true,
-        expectedOutput: getDeletingMsgs([paths[0]]),
-        expectedError: "",
+        expectedOutputs: getDeletingMsgs([paths[0]]),
+        expectedErrors: [""],
       },
     );
     await assertDeleted(paths);
@@ -69,8 +68,8 @@ Deno.test("rm: nothing when path does not exist, quiet -> sucess without output"
       p,
       {
         success: true,
-        expectedOutput: "",
-        expectedError: "",
+        expectedOutputs: [""],
+        expectedErrors: [""],
       },
     );
     await assertDeleted(paths);
@@ -88,8 +87,8 @@ Deno.test("rm: nothing when path does not exist, not quiet -> sucess with output
       p,
       {
         success: true,
-        expectedOutput: "",
-        expectedError: "",
+        expectedOutputs: [""],
+        expectedErrors: [""],
       },
     );
     await assertDeleted(paths);
@@ -109,14 +108,14 @@ Deno.test("rm: mix path that exist and path that exist", async () => {
       makeFile("foo/foo.bar2"),
       "./foo/foo.bar2",
     ]);
-    const expectedOutput = getDeletingMsgs([paths[0], paths[1], paths[3]]);
+    const expectedOutputs = getDeletingMsgs([paths[0], paths[1], paths[3]]);
     p = await runRmProcess({ paths });
     await checkProcess(
       p,
       {
         success: true,
-        expectedOutput,
-        expectedError: "",
+        expectedOutputs,
+        expectedErrors: [""],
       },
     );
     await assertDeleted(paths);
@@ -133,7 +132,7 @@ Deno.test("rm: glob", async () => {
       makeFile("foo1.bar"),
       makeFile("foo2.bar"),
     ]);
-    const expectedOutput = getDeletingMsgs(paths);
+    const expectedOutputs = getDeletingMsgs(paths);
     p = await runRmProcess(
       { paths: ["**/*.bar"], options: ["--glob-root", dirPath] },
     );
@@ -141,8 +140,8 @@ Deno.test("rm: glob", async () => {
       p,
       {
         success: true,
-        expectedOutput,
-        expectedError: "",
+        expectedOutputs,
+        expectedErrors: [""],
       },
     );
     await assertDeleted(paths);
@@ -165,8 +164,8 @@ Deno.test("rm: glob excluding files", async () => {
       p,
       {
         success: true,
-        expectedOutput: "",
-        expectedError: "",
+        expectedOutputs: [""],
+        expectedErrors: [""],
       },
     );
   } finally {
@@ -195,8 +194,8 @@ Deno.test("rm: glob excluding dirs", async () => {
       p,
       {
         success: true,
-        expectedOutput: "",
-        expectedError: "",
+        expectedOutputs: [""],
+        expectedErrors: [""],
       },
     );
   } finally {
@@ -208,14 +207,14 @@ Deno.test("rm: dryRun -> nothing deleted", async () => {
   let p;
   try {
     const paths = [await makeFile("foo.bar")];
-    const expectedOutput = `[Dry Run] Deleting ${paths[0]}\n`;
+    const expectedOutputs = getDeletingMsgs([paths[0]]);
     p = await runRmProcess({ paths, options: ["-d"] });
     await checkProcess(
       p,
       {
         success: true,
-        expectedOutput,
-        expectedError: "",
+        expectedOutputs,
+        expectedErrors: [""],
       },
     );
     assert(await exists(paths[0]));

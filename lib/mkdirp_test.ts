@@ -11,9 +11,8 @@ const runMkProcess = runProcess("mkdirp");
 
 export function getCreatingMsgs(paths: string[], dryRun = false) {
   const prefix = getPrefixMessage(dryRun);
-  return paths.reduce(
-    (acc, path) => acc + `${prefix}Creating ${path}\n`,
-    "",
+  return paths.map(
+    (path) => `${prefix}Creating ${path}`,
   );
 }
 
@@ -22,11 +21,11 @@ Deno.test("mkdirp: should create a dir", async () => {
   try {
     const dir = await makeDirectory();
     const paths = [`${dir}${SEP}foo`];
-    const expectedOutput = getCreatingMsgs(paths);
+    const expectedOutputs = getCreatingMsgs(paths);
     p = await runMkProcess({ paths });
     await checkProcess(
       p,
-      { success: true, expectedOutput, expectedError: "" },
+      { success: true, expectedOutputs, expectedErrors: [""] },
     );
   } finally {
     await cleanTest(p);
@@ -38,11 +37,11 @@ Deno.test("mkdirp: should create dirs", async () => {
   try {
     const dir = await makeDirectory();
     const paths = [`${dir}${SEP}foo`, `${dir}${SEP}foo${SEP}bar${SEP}baz`];
-    const expectedOutput = getCreatingMsgs(paths);
+    const expectedOutputs = getCreatingMsgs(paths);
     p = await runMkProcess({ paths });
     await checkProcess(
       p,
-      { success: true, expectedOutput, expectedError: "" },
+      { success: true, expectedOutputs, expectedErrors: [""] },
     );
   } finally {
     await cleanTest(p);
@@ -54,11 +53,11 @@ Deno.test("mkdirp: in dry mode, should not should create dirs", async () => {
   try {
     const dir = await makeDirectory();
     const paths = [`${dir}${SEP}foo`, `${dir}${SEP}foo${SEP}bar${SEP}baz`];
-    const expectedOutput = getCreatingMsgs(paths, true);
+    const expectedOutputs = getCreatingMsgs(paths, true);
     p = await runMkProcess({ paths, options: ["-d"] });
     await checkProcess(
       p,
-      { success: true, expectedOutput, expectedError: "" },
+      { success: true, expectedOutputs, expectedErrors: [""] },
     );
   } finally {
     await cleanTest(p);

@@ -1,4 +1,4 @@
-import { assertEquals, green, red } from "../../../dev_deps.ts";
+import { assertEquals, green, red, assert } from "../../../dev_deps.ts";
 
 export function getPrefixMessage(dryRun: boolean) {
   return dryRun ? "[Dry Run] " : "";
@@ -27,10 +27,10 @@ export function runProcess(command: string) {
 
 export async function checkProcess(
   p: Deno.Process,
-  { success, expectedOutput, expectedError }: {
+  { success, expectedOutputs, expectedErrors }: {
     success: boolean;
-    expectedOutput: string;
-    expectedError: string;
+    expectedOutputs: string[];
+    expectedErrors: string[];
   },
 ) {
   const { success: actualSuccess } = await p.status();
@@ -41,16 +41,18 @@ export async function checkProcess(
   );
   const decoder = new TextDecoder("utf-8");
   const actualOutput = decoder.decode(await p.output());
-  assertEquals(
-    actualOutput,
-    expectedOutput,
-    `wrong process std output ${green(actualOutput)}!=${red(expectedOutput)}`,
+  expectedOutputs.forEach((expectedOutput) =>
+    assert(
+      actualOutput.includes(expectedOutput),
+      `wrong process std output ${green(actualOutput)}!=${red(expectedOutput)}`,
+    )
   );
   const actualError = decoder.decode(await p.stderrOutput());
-  assertEquals(
-    actualError,
-    expectedError,
-    `wrong proces error ${green(actualError)}!=${red(expectedError)}`,
+  expectedErrors.forEach((expectedError) =>
+    assert(
+      actualError.includes(expectedError),
+      `wrong proces error ${green(actualError)}!=${red(expectedError)}`,
+    )
   );
 }
 
