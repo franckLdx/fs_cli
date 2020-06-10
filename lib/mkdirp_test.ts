@@ -1,5 +1,5 @@
 import { SEP } from "../deps.ts";
-import { makeDirectory } from "./tools/test/fs.ts";
+import { makeDirectory, assertExists } from "./tools/test/fs.ts";
 import {
   runProcess,
   checkProcess,
@@ -8,6 +8,8 @@ import {
 import { cleanTest } from "./tools/test/misc.ts";
 
 const runMkProcess = runProcess("mkdirp");
+const assertCreated = (paths: string[]) => assertExists(paths, true);
+const assertNotCreated = (paths: string[]) => assertExists(paths, false);
 
 export function getCreatingMsgs(paths: string[], dryRun = false) {
   const prefix = getPrefixMessage(dryRun);
@@ -27,6 +29,7 @@ Deno.test("mkdirp: should create a dir", async () => {
       p,
       { success: true, expectedOutputs, expectedErrors: [""] },
     );
+    await assertCreated(paths);
   } finally {
     await cleanTest(p);
   }
@@ -43,6 +46,7 @@ Deno.test("mkdirp: should create dirs", async () => {
       p,
       { success: true, expectedOutputs, expectedErrors: [""] },
     );
+    await assertCreated(paths);
   } finally {
     await cleanTest(p);
   }
@@ -59,6 +63,7 @@ Deno.test("mkdirp: in dry mode, should not should create dirs", async () => {
       p,
       { success: true, expectedOutputs, expectedErrors: [""] },
     );
+    await assertNotCreated(paths);
   } finally {
     await cleanTest(p);
   }

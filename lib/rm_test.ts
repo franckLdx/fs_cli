@@ -1,5 +1,3 @@
-import { assert } from "../dev_deps.ts";
-import { exists } from "../deps.ts";
 import {
   makeFile,
   makeDirectory,
@@ -16,6 +14,7 @@ import { sortPath } from "./tools/search_test.ts";
 
 const runRmProcess = runProcess("rm");
 const assertDeleted = (paths: string[]) => assertExists(paths, false);
+const assertNotDeleted = (paths: string[]) => assertExists(paths, true);
 
 export function getDeletingMsgs(paths: string[], dryRun = false) {
   const prefix = getPrefixMessage(dryRun);
@@ -34,7 +33,7 @@ Deno.test("rm: path exist, quiet mode -> sucess without output", async () => {
       p,
       { success: true, expectedOutputs: [""], expectedErrors: [""] },
     );
-    await assertExists(paths, false);
+    await assertDeleted(paths);
   } finally {
     await cleanTest(p);
   }
@@ -217,7 +216,7 @@ Deno.test("rm: dryRun -> nothing deleted", async () => {
         expectedErrors: [""],
       },
     );
-    assert(await exists(paths[0]));
+    await assertNotDeleted(paths);
   } finally {
     await cleanTest(p);
   }

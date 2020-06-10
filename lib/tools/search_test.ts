@@ -7,7 +7,7 @@ export function sortPath(paths: Array<string>) {
     .sort();
 }
 
-Deno.test("Inputs: with paths only should return all paths", async () => {
+Deno.test("Search: with paths only should return all paths", async () => {
   const inputs = ["foo.json", "bar.ts"];
   const actualPaths = await search(
     inputs,
@@ -16,7 +16,7 @@ Deno.test("Inputs: with paths only should return all paths", async () => {
   assertEquals(inputs, actualPaths);
 });
 
-Deno.test("Inputs: with globs only should return all paths", async () => {
+Deno.test("Search: with globs only should return all paths", async () => {
   try {
     const dirPath = await makeDirectory();
     await makeFile("baz.ts");
@@ -36,7 +36,7 @@ Deno.test("Inputs: with globs only should return all paths", async () => {
   }
 });
 
-Deno.test("Inputs: with globs and input should return all paths", async () => {
+Deno.test("Search: with globs and input should return all paths", async () => {
   try {
     const dirPath = await makeDirectory();
     const inputs = [
