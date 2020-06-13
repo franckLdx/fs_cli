@@ -5,7 +5,7 @@ import { addGlobalOptions } from "./lib/tools/options.ts";
 
 const command = new Command()
   .description("fs_cli tools: handle files through command line")
-  .version("0.3.0");
+  .version("0.4.0");
 
 addGlobalOptions(command);
 addRmCommand(command);
