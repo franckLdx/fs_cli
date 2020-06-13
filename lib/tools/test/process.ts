@@ -1,4 +1,5 @@
-import { assertEquals, green, red, assert } from "../../../dev_deps.ts";
+import { green, red, assertEquals } from "../../../dev_deps.ts";
+import { assert } from "../../../deps.ts";
 
 export function getPrefixMessage(dryRun: boolean) {
   return dryRun ? "[Dry Run] " : "";

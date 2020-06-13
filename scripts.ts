@@ -4,7 +4,7 @@ Scripts(
   {
     // ds test
     test: {
-      run: "deno test -A",
+      run: "deno test -A --unstable",
       // Enable watch mode
       watch: true,
       // Add environment variables

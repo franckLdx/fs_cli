@@ -5,16 +5,18 @@ import {
   getLogger,
   Logger,
 } from "../deps.ts";
-import { configLog } from "./tools/logger.ts";
+import { createFsCliLogger } from "./tools/logger.ts";
 import {
   GlobalOptions,
   assertValidCliOptions,
+  parseGlobalOptions,
 } from "./tools/options.ts";
 import { search, SearchOptions } from "./tools/search.ts";
 
 export function addRmCommand(command: Command<any, any>) {
   return command
     .command("rm <paths...:string>")
+    .description("rm -rf on each file and directory")
     .option(
       "--glob-root [glob-root:string]",
       "root for the glob search",
@@ -35,11 +37,9 @@ export function addRmCommand(command: Command<any, any>) {
 
 type RmOptions = GlobalOptions & SearchOptions;
 
-export async function rmCommand(options: IFlags, inputs: string[]) {
+async function rmCommand(options: IFlags, inputs: string[]) {
   const rmOptions = parseCliOptions(options);
-
-  await configLog(rmOptions);
-  const logger = getLogger();
+  const logger = await createFsCliLogger(rmOptions);
   const remove = removeHOF(logger, rmOptions);
 
   const paths = await search(inputs, rmOptions);
@@ -68,8 +68,7 @@ const parseCliOptions = (options: any): RmOptions => {
     "globFiles",
   );
   const rmOptions = {
-    dry: options["dry"] as boolean,
-    quiet: options["quiet"] as boolean,
+    ...parseGlobalOptions(options),
     root: options["globRoot"] as string,
     includeDirs: options["globDirs"] as boolean,
     includeFiles: options["globFiles"] as boolean,
