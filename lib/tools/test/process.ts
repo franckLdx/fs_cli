@@ -49,6 +49,8 @@ export async function checkProcess(
     )
   );
   const actualError = decoder.decode(await p.stderrOutput());
+  console.log(actualError);
+
   expectedErrors.forEach((expectedError) =>
     assert(
       actualError.includes(expectedError),
@@ -58,6 +60,6 @@ export async function checkProcess(
 }
 
 export async function cleanProcess(p: Deno.Process | undefined) {
-  p?.stdin?.close();
+  // p?.stdin?.close();
   p?.close();
 }

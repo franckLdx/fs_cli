@@ -35,7 +35,7 @@ async function copyCommand(options: IFlags, inputs: string[]) {
   }
 }
 
-const parseCliOptions = (options: any): GlobalOptions => {
+const parseCliOptions = (options: IFlags): GlobalOptions => {
   assertValidCliOptions(
     options,
   );

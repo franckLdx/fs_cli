@@ -2,10 +2,16 @@ export {
   assert,
 } from "https://deno.land/std@0.57.0/testing/asserts.ts";
 
-export { ensureDir } from "https://deno.land/std@0.57.0/fs/ensure_dir.ts";
-export { exists } from "https://deno.land/std@0.57.0/fs/exists.ts";
-export { walk } from "https://deno.land/std@0.57.0/fs/walk.ts";
-export { copy } from "https://deno.land/std@0.57.0/fs/copy.ts";
+export {
+  ensureDir,
+  exists,
+  walk,
+  copy,
+} from "https://deno.land/std@0.57.0/fs/mod.ts";
+// export { copy } from "https://deno.land/std@0.57.0/fs/copy.ts";
+// export { ensureDir } from "https://deno.land/std@0.57.0/fs/ensure_dir.ts";
+// export { exists } from "https://deno.land/std@0.57.0/fs/exists.ts";
+// export { walk } from "https://deno.land/std@0.57.0/fs/walk.ts";
 
 export {
   isGlob,

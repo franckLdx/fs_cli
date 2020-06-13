@@ -1,7 +1,6 @@
 import {
   Command,
   IFlags,
-  getLogger,
   Logger,
   ensureDir,
 } from "../deps.ts";
@@ -29,7 +28,7 @@ export async function mkDirpCommand(options: IFlags, paths: string[]) {
   }
 }
 
-const parseCliOptions = (options: any): GlobalOptions => {
+const parseCliOptions = (options: IFlags): GlobalOptions => {
   assertValidCliOptions(options);
   return parseGlobalOptions(options);
 };

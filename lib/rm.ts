@@ -60,7 +60,7 @@ const removeHOF = (logger: Logger, { dry }: GlobalOptions) => {
   };
 };
 
-const parseCliOptions = (options: any): RmOptions => {
+const parseCliOptions = (options: IFlags): RmOptions => {
   assertValidCliOptions(
     options,
     "globRoot",

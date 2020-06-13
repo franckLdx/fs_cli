@@ -16,7 +16,7 @@ export function addGlobalOptions(command: Command<any, any>) {
 }
 
 export function assertValidCliOptions<T>(
-  options: any,
+  options: IFlags,
   ...keys: Array<string>
 ) {
   for (const key of ["quiet", "dry", ...keys]) {
