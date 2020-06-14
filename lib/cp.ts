@@ -6,20 +6,19 @@ import {
 } from "./tools/options.ts";
 import { createFsCliLogger } from "./tools/logger.ts";
 
-export function addCopyCommand(command: Command<any, any>) {
+export function addCpCommand(command: Command<any, any>) {
   return command
-    .command("copy <inputs...:string>")
-    .action(copyCommand);
+    .command("cp <inputs...:string>")
+    .action(cpCommand);
 }
 
-async function copyCommand(options: IFlags, inputs: string[]) {
+async function cpCommand(options: IFlags, inputs: string[]) {
   const copyOptions = parseCliOptions(options);
   const logger = await createFsCliLogger(copyOptions);
+  if (inputs.length < 2) {
+    throw new Error("Must have at least one source and the destination");
+  }
 
-  assert(
-    inputs.length >= 2,
-    "must have at least one source and the destination",
-  );
   const sources = inputs.slice(0, inputs.length - 1);
   const dest = inputs[inputs.length - 1];
 

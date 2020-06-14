@@ -49,17 +49,19 @@ export async function checkProcess(
     )
   );
   const actualError = decoder.decode(await p.stderrOutput());
-  console.log(actualError);
-
   expectedErrors.forEach((expectedError) =>
     assert(
       actualError.includes(expectedError),
-      `wrong proces error ${green(actualError)}!=${red(expectedError)}`,
+      `wrong proces srd error ${green(actualError)}!=${red(expectedError)}`,
     )
   );
 }
 
-export async function cleanProcess(p: Deno.Process | undefined) {
-  // p?.stdin?.close();
+export async function cleanProcess<T extends Deno.RunOptions>(
+  p: Deno.Process<T> | undefined,
+) {
+  p?.stdin?.close();
+  // p?.stdout?.close();
+  // p?.stderr?.close();
   p?.close();
 }

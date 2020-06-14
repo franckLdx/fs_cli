@@ -1,7 +1,7 @@
 import { Command } from "./deps.ts";
 import { addRmCommand } from "./lib/rm.ts";
 import { addMkDirpCommand } from "./lib/mkdirp.ts";
-import { addCopyCommand } from "./lib/copy.ts";
+import { addCpCommand } from "./lib/cp.ts";
 import { addGlobalOptions } from "./lib/tools/options.ts";
 
 const command = new Command()
@@ -9,7 +9,7 @@ const command = new Command()
   .version("0.5.0");
 
 addGlobalOptions(command);
-addCopyCommand(command);
+addCpCommand(command);
 addRmCommand(command);
 addMkDirpCommand(command);
 
