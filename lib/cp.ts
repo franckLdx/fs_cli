@@ -1,4 +1,4 @@
-import { Command, IFlags, copy, assert, exists, ensureDir } from "../deps.ts";
+import { Command, IFlags, copy, exists, ensureDir } from "../deps.ts";
 import {
   GlobalOptions,
   assertValidCliOptions,
@@ -27,7 +27,7 @@ async function cpCommand(options: IFlags, inputs: string[]) {
   }
 
   for await (const source of sources) {
-    logger.info(`Copying ${source}`);
+    logger.info(`Copying ${source} to ${dest}`);
     if (!copyOptions.dry) {
       await copy(source, dest);
     }

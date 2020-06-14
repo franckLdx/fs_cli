@@ -4,25 +4,30 @@ import {
   assert,
   assertEquals,
 } from "../../../dev_deps.ts";
-import { exists, SEP } from "../../../deps.ts";
+import { exists, join } from "../../../deps.ts";
 
 let tmpDirectory: string | undefined;
 
-export async function makeDirectory() {
+export async function makeDirectory(path?: string) {
   if (!tmpDirectory) {
     tmpDirectory = await Deno.makeTempDir({ prefix: "fs_cli" });
   }
-  return tmpDirectory;
+  let result = tmpDirectory!;
+  if (path) {
+    result = join(result, path);
+    await ensureDir(result);
+  }
+  return result;
 }
 
 export async function makeSubDirectory(path: string) {
-  const fullPath = await getFullPath(await makeDirectory(), path);
+  const fullPath = join(await makeDirectory(), path);
   await ensureDir(fullPath);
   return fullPath;
 }
 
 export async function makeFile(fileName: string) {
-  const filePath = getFullPath(await makeDirectory(), fileName);
+  const filePath = join(await makeDirectory(), fileName);
   await ensureFile(filePath);
   return filePath;
 }
@@ -39,14 +44,18 @@ export async function cleanDir() {
 
 export async function assertExists(paths: string[], exist = true) {
   for await (const path of paths) {
-    assertEquals(await exists(path), exist);
+    assertEquals(
+      await exists(path),
+      exist,
+      `${path} should ${!exist ? "not" : ""} exist`,
+    );
   }
 }
 
-const getFullPath = (...paths: string[]) => {
-  const fullPath = paths.reduce(
-    (acc, path) => `${acc}${path}${SEP}`,
-    "",
-  );
-  return fullPath.slice(0, fullPath.length - 1);
-};
+export async function assertCreated(...paths: string[]) {
+  await assertExists(paths, true);
+}
+
+export async function assertNotCreated(...paths: string[]) {
+  await assertExists(paths, false);
+}

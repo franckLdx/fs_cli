@@ -2,7 +2,6 @@ import {
   IFlags,
   exists,
   Command,
-  getLogger,
   Logger,
 } from "../deps.ts";
 import { createFsCliLogger } from "./tools/logger.ts";
