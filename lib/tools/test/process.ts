@@ -42,7 +42,6 @@ export async function checkProcess(
   );
   const decoder = new TextDecoder("utf-8");
   const actualOutput = decoder.decode(await p.output());
-  console.log("==========", actualOutput);
   expectedOutputs.forEach((expectedOutput) =>
     assert(
       actualOutput.includes(expectedOutput),
@@ -50,7 +49,6 @@ export async function checkProcess(
     )
   );
   const actualError = decoder.decode(await p.stderrOutput());
-  console.log("==========", actualError);
   expectedErrors.forEach((expectedError) =>
     assert(
       actualError.includes(expectedError),

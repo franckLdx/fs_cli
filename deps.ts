@@ -7,17 +7,15 @@ export {
   exists,
   walk,
   copy,
+  CopyOptions,
 } from "https://deno.land/std@0.57.0/fs/mod.ts";
-// export { copy } from "https://deno.land/std@0.57.0/fs/copy.ts";
-// export { ensureDir } from "https://deno.land/std@0.57.0/fs/ensure_dir.ts";
-// export { exists } from "https://deno.land/std@0.57.0/fs/exists.ts";
-// export { walk } from "https://deno.land/std@0.57.0/fs/walk.ts";
 
 export {
   isGlob,
   globToRegExp,
   join,
   dirname,
+  basename,
   SEP,
 } from "https://deno.land/std@0.57.0/path/mod.ts";
 

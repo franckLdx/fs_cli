@@ -52,8 +52,32 @@ export async function assertExists(paths: string[], exist = true) {
   }
 }
 
-export async function assertCreated(...paths: string[]) {
-  await assertExists(paths, true);
+export async function assertDirCreated(...paths: string[]) {
+  for await (const path of paths) {
+    try {
+      const stat = await Deno.lstat(path);
+      assert(stat.isDirectory, `${path} is not a directory`);
+    } catch (err) {
+      if (err instanceof Deno.errors.NotFound) {
+        assert(false, `${path} does not exist`);
+      }
+      throw err;
+    }
+  }
+}
+
+export async function assertFileCreated(...paths: string[]) {
+  for await (const path of paths) {
+    try {
+      const stat = await Deno.lstat(path);
+      assert(stat.isFile, `${path} is not a file`);
+    } catch (err) {
+      if (err instanceof Deno.errors.NotFound) {
+        assert(false, `${path} does not exist`);
+      }
+      throw err;
+    }
+  }
 }
 
 export async function assertNotCreated(...paths: string[]) {

@@ -1,16 +1,27 @@
 import { cleanTest } from "./tools/test/misc.ts";
 import {
   makeFile,
-  assertCreated,
+  assertDirCreated,
   assertNotCreated,
+  makeDirectory,
+  assertFileCreated,
 } from "./tools/test/fs.ts";
-import { runProcess, checkProcess } from "./tools/test/process.ts";
-import { join, dirname } from "../deps.ts";
+import {
+  runProcess,
+  checkProcess,
+  getPrefixMessage,
+} from "./tools/test/process.ts";
+import { join, dirname, basename } from "../deps.ts";
 
 const runCpProcess = runProcess("cp");
 
+const getCopyingMessage = (source: string, dest: string, dryRun = false) =>
+  `${getPrefixMessage(dryRun)}Copying ${source} to ${dest}`;
+
+const getAlreadyExistMessage = (dest: string, dryRun = false) =>
+  `${getPrefixMessage(dryRun)}${dest}' already exists`;
+
 Deno.test({
-  only: true,
   name: "copy: wrong parameter",
   async fn() {
     let p: Deno.Process | undefined;
@@ -28,7 +39,6 @@ Deno.test({
 });
 
 Deno.test({
-  only: true,
   name: "copy: copy a file to a new file: create the file",
   async fn() {
     let p: Deno.Process | undefined;
@@ -41,7 +51,7 @@ Deno.test({
         expectedOutputs: [`Copying ${sourceFile} to ${destFile}`],
         expectedErrors: [""],
       });
-      await assertCreated(destFile);
+      await assertFileCreated(destFile);
     } finally {
       await cleanTest(p);
     }
@@ -49,7 +59,6 @@ Deno.test({
 });
 
 Deno.test({
-  only: true,
   name: "copy: copy a file to a new file in dry mode: file not created",
   async fn() {
     let p: Deno.Process | undefined;
@@ -61,7 +70,9 @@ Deno.test({
       );
       await checkProcess(p, {
         success: true,
-        expectedOutputs: [`[Dry Run] Copying ${sourceFile} to ${destFile}`],
+        expectedOutputs: [
+          getCopyingMessage(sourceFile, destFile, true),
+        ],
         expectedErrors: [""],
       });
       await assertNotCreated(destFile);
@@ -72,7 +83,6 @@ Deno.test({
 });
 
 Deno.test({
-  only: true,
   name: "copy: copy a file to an existing file: copy rejected",
   async fn() {
     let p: Deno.Process | undefined;
@@ -85,7 +95,7 @@ Deno.test({
       await checkProcess(p, {
         success: false,
         expectedOutputs: [""],
-        expectedErrors: [`'${destFile}' already exists`],
+        expectedErrors: [getAlreadyExistMessage(destFile)],
       });
     } finally {
       await cleanTest(p);
@@ -94,13 +104,49 @@ Deno.test({
 });
 
 Deno.test({
-  name: "copy: copy a file to an existing file with overridend: file copied",
-  async fn() {},
+  name:
+    "copy: copy a file to an existing file with overwrite option: file copied",
+  async fn() {
+    let p: Deno.Process | undefined;
+    try {
+      const sourceFile = await makeFile("sourceFile");
+      const destFile = await makeFile("destFile");
+      p = await runCpProcess(
+        { paths: [sourceFile, destFile], options: ["--overwrite"] },
+      );
+      await checkProcess(p, {
+        success: true,
+        expectedOutputs: [getCopyingMessage(sourceFile, destFile)],
+        expectedErrors: [""],
+      });
+    } finally {
+      await cleanTest(p);
+    }
+  },
 });
 
 Deno.test({
   name: "copy: copy a file to a new directory: directory and file created",
-  async fn() {},
+  async fn() {
+    let p: Deno.Process | undefined;
+    try {
+      const dir = await makeDirectory();
+      const sourceFile = await makeFile("sourceFile");
+      const destDir = join(dir, "Dir") + "/";
+      p = await runCpProcess(
+        { paths: [sourceFile, destDir] },
+      );
+      await checkProcess(p, {
+        success: true,
+        expectedOutputs: [getCopyingMessage(sourceFile, destDir)],
+        expectedErrors: [""],
+      });
+      await assertDirCreated(destDir);
+      await assertFileCreated(join(destDir, basename(sourceFile)));
+    } finally {
+      await cleanTest(p);
+    }
+  },
 });
 
 Deno.test({
