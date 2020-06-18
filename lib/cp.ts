@@ -52,14 +52,14 @@ const copyHOF = (logger: Logger, cpOptions: CpOptions) => {
   const denoOptions: CopyOptions = { overwrite: cpOptions.overwrite };
   return async (source: string, dest: string) => {
     logger.info(`Copying ${source} to ${dest}`);
-    const actualDest = await getDestPath(source, dest);
+    const actualDest = await getActualDest(source, dest);
     if (!cpOptions.dry) {
-      await denoCopy(source, actualDest, { overwrite: cpOptions.overwrite });
+      await denoCopy(source, actualDest, denoOptions);
     }
   };
 };
 
-const getDestPath = async (
+const getActualDest = async (
   source: string,
   dest: string,
 ) => {

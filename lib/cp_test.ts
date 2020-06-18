@@ -11,7 +11,7 @@ import {
   checkProcess,
   getPrefixMessage,
 } from "./tools/test/process.ts";
-import { join, dirname, basename } from "../deps.ts";
+import { join, dirname, basename, SEP } from "../deps.ts";
 
 const runCpProcess = runProcess("cp");
 
@@ -132,7 +132,7 @@ Deno.test({
     try {
       const dir = await makeDirectory();
       const sourceFile = await makeFile("sourceFile");
-      const destDir = join(dir, "Dir") + "/";
+      const destDir = join(dir, "Dir") + SEP;
       p = await runCpProcess(
         { paths: [sourceFile, destDir] },
       );
@@ -152,18 +152,47 @@ Deno.test({
 Deno.test({
   name:
     "copy: copy a file to a new directory in dry mode: directory and file not created",
-  async fn() {},
+  async fn() {
+    let p: Deno.Process | undefined;
+    try {
+      const dir = await makeDirectory();
+      const sourceFile = await makeFile("sourceFile");
+      const destDir = join(dir, "Dir") + "/";
+      p = await runCpProcess(
+        { paths: [sourceFile, destDir], options: ["--dry"] },
+      );
+      await checkProcess(p, {
+        success: true,
+        expectedOutputs: [getCopyingMessage(sourceFile, destDir, true)],
+        expectedErrors: [""],
+      });
+      await assertNotCreated(destDir);
+    } finally {
+      await cleanTest(p);
+    }
+  },
 });
 
 Deno.test({
-  name: "copy: copy files to a new directory: directory and files created",
-  async fn() {},
-});
+  name: "copy: copy files to a a directory that contains the file: rejected",
+  async fn() {
+    let p: Deno.Process | undefined;
+    try {
+      const sourceFile = await makeFile("sourceFile");
+      const destFile = await makeFile(join("destDir", "destFile"));
 
-Deno.test({
-  name:
-    "copy: copy files to a new directory in dry mode: directory and files not created",
-  async fn() {},
+      p = await runCpProcess(
+        { paths: [sourceFile, destFile] },
+      );
+      await checkProcess(p, {
+        success: false,
+        expectedOutputs: [""],
+        expectedErrors: [`'${destFile}' already exists`],
+      });
+    } finally {
+      await cleanTest(p);
+    }
+  },
 });
 
 Deno.test({

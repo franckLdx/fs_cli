@@ -4,7 +4,7 @@ import {
   assert,
   assertEquals,
 } from "../../../dev_deps.ts";
-import { exists, join } from "../../../deps.ts";
+import { exists, join, basename, dirname } from "../../../deps.ts";
 
 let tmpDirectory: string | undefined;
 
@@ -26,10 +26,12 @@ export async function makeSubDirectory(path: string) {
   return fullPath;
 }
 
-export async function makeFile(fileName: string) {
-  const filePath = join(await makeDirectory(), fileName);
-  await ensureFile(filePath);
-  return filePath;
+export async function makeFile(filePath: string) {
+  const fileName = basename(filePath);
+  const fileDir = dirname(filePath);
+  const fullFilePath = join(await makeDirectory(fileDir), filePath);
+  await ensureFile(fullFilePath);
+  return fullFilePath;
 }
 
 export async function cleanDir() {
