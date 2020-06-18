@@ -196,18 +196,26 @@ Deno.test({
 });
 
 Deno.test({
-  name: "copy: copy files to a directory: files created",
-  async fn() {},
-});
+  name:
+    "copy: copy files to a directory that contains the file with overwrite: file copied",
+  async fn() {
+    let p: Deno.Process | undefined;
+    try {
+      const sourceFile = await makeFile("sourceFile");
+      const destFile = await makeFile(join("destDir", "destFile"));
 
-Deno.test({
-  name: "copy: copy files to a directory in dry mode: files not created",
-  async fn() {},
-});
-
-Deno.test({
-  name: "copy: copy a directory to a new directory: directory created",
-  async fn() {},
+      p = await runCpProcess(
+        { paths: [sourceFile, destFile], options: ["--overwrite"] },
+      );
+      await checkProcess(p, {
+        success: true,
+        expectedOutputs: [getCopyingMessage(sourceFile, destFile)],
+        expectedErrors: [""],
+      });
+    } finally {
+      await cleanTest(p);
+    }
+  },
 });
 
 Deno.test({
