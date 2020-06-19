@@ -10,7 +10,7 @@ let tmpDirectory: string | undefined;
 
 export async function makeDirectory(path?: string) {
   if (!tmpDirectory) {
-    tmpDirectory = await Deno.makeTempDir({ prefix: "fs_cli" });
+    tmpDirectory = await Deno.makeTempDir({ prefix: "fs_cli_" });
   }
   let result = tmpDirectory!;
   if (path) {
@@ -20,16 +20,11 @@ export async function makeDirectory(path?: string) {
   return result;
 }
 
-export async function makeSubDirectory(path: string) {
-  const fullPath = join(await makeDirectory(), path);
-  await ensureDir(fullPath);
-  return fullPath;
-}
-
 export async function makeFile(filePath: string) {
   const fileName = basename(filePath);
   const fileDir = dirname(filePath);
-  const fullFilePath = join(await makeDirectory(fileDir), filePath);
+  const fullDirPath = await makeDirectory(fileDir);
+  const fullFilePath = join(fullDirPath, fileName);
   await ensureFile(fullFilePath);
   return fullFilePath;
 }

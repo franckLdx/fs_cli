@@ -1,4 +1,4 @@
-import { SEP } from "../deps.ts";
+import { SEP, join } from "../deps.ts";
 import { makeDirectory, assertExists } from "./tools/test/fs.ts";
 import {
   runProcess,
@@ -6,6 +6,7 @@ import {
   getPrefixMessage,
 } from "./tools/test/process.ts";
 import { cleanTest } from "./tools/test/misc.ts";
+import { optionsDry } from "./tools/test/options.ts";
 
 const runMkProcess = runProcess("mkdirp");
 const assertCreated = (paths: string[]) => assertExists(paths, true);
@@ -64,9 +65,9 @@ Deno.test({
     let p: Deno.Process | undefined;
     try {
       const dir = await makeDirectory();
-      const paths = [`${dir}${SEP}foo`, `${dir}${SEP}foo${SEP}bar${SEP}baz`];
+      const paths = [join(dir, "foo"), join(dir, "foo", "bar", "baz")];
       const expectedOutputs = getCreatingMsgs(paths, true);
-      p = await runMkProcess({ paths, options: ["-d"] });
+      p = await runMkProcess({ paths, options: optionsDry });
       await checkProcess(
         p,
         { success: true, expectedOutputs, expectedErrors: [""] },

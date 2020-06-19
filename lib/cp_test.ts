@@ -6,6 +6,7 @@ import {
   makeDirectory,
   assertFileCreated,
 } from "./tools/test/fs.ts";
+import { optionsDry, overWrite } from "./tools/test/options.ts";
 import {
   runProcess,
   checkProcess,
@@ -66,7 +67,7 @@ Deno.test({
       const sourceFile = await makeFile("sourceFile");
       const destFile = join(dirname(sourceFile), "destFile");
       p = await runCpProcess(
-        { paths: [sourceFile, destFile], options: ["--dry"] },
+        { paths: [sourceFile, destFile], options: optionsDry },
       );
       await checkProcess(p, {
         success: true,
@@ -112,7 +113,7 @@ Deno.test({
       const sourceFile = await makeFile("sourceFile");
       const destFile = await makeFile("destFile");
       p = await runCpProcess(
-        { paths: [sourceFile, destFile], options: ["--overwrite"] },
+        { paths: [sourceFile, destFile], options: overWrite },
       );
       await checkProcess(p, {
         success: true,
@@ -159,7 +160,7 @@ Deno.test({
       const sourceFile = await makeFile("sourceFile");
       const destDir = join(dir, "Dir") + "/";
       p = await runCpProcess(
-        { paths: [sourceFile, destDir], options: ["--dry"] },
+        { paths: [sourceFile, destDir], options: optionsDry },
       );
       await checkProcess(p, {
         success: true,
@@ -205,7 +206,7 @@ Deno.test({
       const destFile = await makeFile(join("destDir", "destFile"));
 
       p = await runCpProcess(
-        { paths: [sourceFile, destFile], options: ["--overwrite"] },
+        { paths: [sourceFile, destFile], options: overWrite },
       );
       await checkProcess(p, {
         success: true,
@@ -220,17 +221,141 @@ Deno.test({
 
 Deno.test({
   name:
+    "copy: copy a directory to a new directory: directory created and it's content is copied",
+  async fn() {
+    let p: Deno.Process | undefined;
+    try {
+      const dir = await makeDirectory();
+      const sourceName = "source";
+      const sourceDir = await makeDirectory(sourceName);
+      const subDir1Name = "subDir1";
+      const subDir2Name = "subDir2";
+      await makeFile(join(sourceName, "file1"));
+      await makeFile(join(sourceName, "file2"));
+      await makeFile(join(sourceName, subDir1Name, "file1_1"));
+      await makeFile(join(sourceName, subDir1Name, "file1_2"));
+      await makeFile(join(sourceName, subDir1Name, "file1_3"));
+      await makeFile(join(sourceName, subDir2Name, "file2_1"));
+      const destDir = join(dir, "dest");
+      p = await runCpProcess(
+        { paths: [sourceDir, destDir] },
+      );
+      await checkProcess(p, {
+        success: true,
+        expectedOutputs: [getCopyingMessage(sourceDir, destDir)],
+        expectedErrors: [""],
+      });
+      const destFiles = [
+        join(destDir, "file1"),
+        join(destDir, "file2"),
+        join(destDir, subDir1Name, "file1_1"),
+        join(destDir, subDir1Name, "file1_2"),
+        join(destDir, subDir1Name, "file1_3"),
+        join(destDir, subDir2Name, "file2_1"),
+      ];
+      for await (const file of destFiles) {
+        await assertFileCreated(file);
+      }
+    } finally {
+      await cleanTest(p);
+    }
+  },
+});
+
+Deno.test({
+  name:
     "copy: copy a directory to a new directory in dry mode: directory not created",
-  async fn() {},
+  async fn() {
+    let p: Deno.Process | undefined;
+    try {
+      const dir = await makeDirectory();
+      const sourceName = "source";
+      const sourceDir = await makeDirectory(sourceName);
+      const subDir1Name = join(sourceName, "subDir1");
+      const subDir2Name = join(sourceName, "subDir2");
+      await makeFile(join(sourceName, "file1"));
+      await makeFile(join(sourceName, "file2"));
+      await makeFile(join(subDir1Name, "file1_1"));
+      await makeFile(join(subDir1Name, "file1_2"));
+      await makeFile(join(subDir1Name, "file1_3"));
+      await makeFile(join(subDir2Name, "file2_1"));
+      const destDir = join(dir, "dest");
+      p = await runCpProcess(
+        { paths: [sourceDir, destDir], options: optionsDry },
+      );
+      await checkProcess(p, {
+        success: true,
+        expectedOutputs: [getCopyingMessage(sourceDir, destDir, true)],
+        expectedErrors: [""],
+      });
+      await assertNotCreated(destDir);
+    } finally {
+      await cleanTest(p);
+    }
+  },
 });
 
 Deno.test({
   name: "copy: copy a directory to an existing directory: copy rejected",
-  async fn() {},
+  async fn() {
+    let p: Deno.Process | undefined;
+    try {
+      const sourceName = "source";
+      const sourceDir = await makeDirectory(sourceName);
+      const subDir1Name = "subDir1";
+      const subDir2Name = "subDir2";
+      await makeFile(join(sourceName, "file1"));
+      await makeFile(join(sourceName, "file2"));
+      await makeFile(join(sourceName, subDir1Name, "file1_1"));
+      await makeFile(join(sourceName, subDir1Name, "file1_2"));
+      await makeFile(join(sourceName, subDir1Name, "file1_3"));
+      await makeFile(join(sourceName, subDir2Name, "file2_1"));
+      const destName = "dest";
+      const destDir = await makeDirectory(destName);
+      p = await runCpProcess(
+        { paths: [sourceDir, destDir] },
+      );
+      await checkProcess(p, {
+        success: false,
+        expectedOutputs: [],
+        expectedErrors: [
+          `'${destDir}' already exists`,
+        ],
+      });
+    } finally {
+      await cleanTest(p);
+    }
+  },
 });
 
 Deno.test({
   name:
     "copy: copy a directory to an existing directory with overriden: direcctory copied",
-  async fn() {},
+  async fn() {
+    let p: Deno.Process | undefined;
+    try {
+      const sourceName = "source";
+      const sourceDir = await makeDirectory(sourceName);
+      const subDir1Name = "subDir1";
+      const subDir2Name = "subDir2";
+      await makeFile(join(sourceName, "file1"));
+      await makeFile(join(sourceName, "file2"));
+      await makeFile(join(sourceName, subDir1Name, "file1_1"));
+      await makeFile(join(sourceName, subDir1Name, "file1_2"));
+      await makeFile(join(sourceName, subDir1Name, "file1_3"));
+      await makeFile(join(sourceName, subDir2Name, "file2_1"));
+      const destName = "dest";
+      const destDir = await makeDirectory(destName);
+      p = await runCpProcess(
+        { paths: [sourceDir, destDir], options: overWrite },
+      );
+      await checkProcess(p, {
+        success: true,
+        expectedOutputs: [getCopyingMessage(sourceDir, destDir)],
+        expectedErrors: [""],
+      });
+    } finally {
+      await cleanTest(p);
+    }
+  },
 });

@@ -1,7 +1,6 @@
 import {
   makeFile,
   makeDirectory,
-  makeSubDirectory,
   assertExists,
 } from "./tools/test/fs.ts";
 import { cleanTest } from "./tools/test/misc.ts";
@@ -11,6 +10,7 @@ import {
   getPrefixMessage,
 } from "./tools/test/process.ts";
 import { sortPath } from "./tools/search_test.ts";
+import { optionsDry } from "./tools/test/options.ts";
 
 const runRmProcess = runProcess("rm");
 const assertDeleted = (paths: string[]) => assertExists(paths, false);
@@ -203,9 +203,9 @@ Deno.test({
       const dirPath = await makeDirectory();
       await Promise.all(
         [
-          makeSubDirectory("foo"),
-          makeSubDirectory("fooBar"),
-          makeSubDirectory("fooBaz"),
+          makeDirectory("foo"),
+          makeDirectory("fooBar"),
+          makeDirectory("fooBaz"),
         ],
       );
       p = await runRmProcess(
@@ -235,7 +235,7 @@ Deno.test({
     try {
       const paths = [await makeFile("foo.bar")];
       const expectedOutputs = getDeletingMsgs([paths[0]]);
-      p = await runRmProcess({ paths, options: ["-d"] });
+      p = await runRmProcess({ paths, options: optionsDry });
       await checkProcess(
         p,
         {
