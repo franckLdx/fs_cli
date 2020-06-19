@@ -1,2 +1,2 @@
 export const optionsDry = ["-d"];
-export const overWrite = ["--overwrite"];
+export const force = ["--force"];

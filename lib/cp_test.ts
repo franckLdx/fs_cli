@@ -6,7 +6,7 @@ import {
   makeDirectory,
   assertFileCreated,
 } from "./tools/test/fs.ts";
-import { optionsDry, overWrite } from "./tools/test/options.ts";
+import { optionsDry, force } from "./tools/test/options.ts";
 import {
   runProcess,
   checkProcess,
@@ -105,15 +105,14 @@ Deno.test({
 });
 
 Deno.test({
-  name:
-    "copy: copy a file to an existing file with overwrite option: file copied",
+  name: "copy: copy a file to an existing file with force option: file copied",
   async fn() {
     let p: Deno.Process | undefined;
     try {
       const sourceFile = await makeFile("sourceFile");
       const destFile = await makeFile("destFile");
       p = await runCpProcess(
-        { paths: [sourceFile, destFile], options: overWrite },
+        { paths: [sourceFile, destFile], options: force },
       );
       await checkProcess(p, {
         success: true,
@@ -198,7 +197,7 @@ Deno.test({
 
 Deno.test({
   name:
-    "copy: copy files to a directory that contains the file with overwrite: file copied",
+    "copy: copy files to a directory that contains the file with force: file copied",
   async fn() {
     let p: Deno.Process | undefined;
     try {
@@ -206,7 +205,7 @@ Deno.test({
       const destFile = await makeFile(join("destDir", "destFile"));
 
       p = await runCpProcess(
-        { paths: [sourceFile, destFile], options: overWrite },
+        { paths: [sourceFile, destFile], options: force },
       );
       await checkProcess(p, {
         success: true,
@@ -347,7 +346,7 @@ Deno.test({
       const destName = "dest";
       const destDir = await makeDirectory(destName);
       p = await runCpProcess(
-        { paths: [sourceDir, destDir], options: overWrite },
+        { paths: [sourceDir, destDir], options: force },
       );
       await checkProcess(p, {
         success: true,
