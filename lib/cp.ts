@@ -1,14 +1,12 @@
 import {
   Command,
   IFlags,
-  copy as denoCopy,
-  ensureDir,
   SEP,
   join,
   basename,
   dirname,
   Logger,
-  CopyOptions,
+  DenoCopyOptions,
 } from "../deps.ts";
 import {
   GlobalOptions,
@@ -16,6 +14,7 @@ import {
   parseGlobalOptions,
 } from "./tools/options.ts";
 import { createFsCliLogger } from "./tools/logger.ts";
+import { ensureDir, copy, CopyOptions } from "./tools/fs.ts";
 
 export function addCpCommand(command: Command<any, any>) {
   return command
@@ -33,32 +32,31 @@ export function addCpCommand(command: Command<any, any>) {
     .action(cpCommand);
 }
 
-type CpOptions = GlobalOptions & CopyOptions;
+type CpOptions = GlobalOptions & DenoCopyOptions;
 
 async function cpCommand(options: IFlags, inputs: string[]) {
   const cpOptions = parseCliOptions(options);
   const logger = await createFsCliLogger(cpOptions);
-  if (inputs.length < 2) {
-    throw new Error("Must have at least one source and the destination");
-  }
 
-  const sources = inputs.slice(0, inputs.length - 1);
-  const dest = inputs[inputs.length - 1];
+  const [sources, dest] = parseIpnuts(inputs);
 
-  await ensureDest(sources, dest, cpOptions);
-  const copy = copyHOF(logger, cpOptions);
-
+  const doCopy = copyHOF(logger, cpOptions);
   for await (const source of sources) {
-    await copy(source, dest);
+    await doCopy(source, dest);
   }
 }
 
 const copyHOF = (logger: Logger, cpOptions: CpOptions) => {
+  const denoCopyOptions: DenoCopyOptions = {
+    overwrite: cpOptions.overwrite,
+    preserveTimestamps: cpOptions.preserveTimestamps,
+  };
+  const copyOptions: CopyOptions = { global: cpOptions, copy: denoCopyOptions };
   return async (source: string, dest: string) => {
-    logger.info(`Copying ${source} to ${dest}`);
-    const actualDest = await getActualDest(source, dest);
+    const actualDest = await getActualDest(source, dest, cpOptions);
+    logger.info(`Copying ${source} to ${actualDest}`);
     if (!cpOptions.dry) {
-      await denoCopy(source, actualDest, cpOptions);
+      await copy(source, actualDest, copyOptions);
     }
   };
 };
@@ -66,24 +64,39 @@ const copyHOF = (logger: Logger, cpOptions: CpOptions) => {
 const getActualDest = async (
   source: string,
   dest: string,
+  cpOptions: CpOptions,
 ) => {
-  try {
-    const destStat = await Deno.lstat(dest);
-    if (!destStat.isDirectory) {
-      return dest;
-    }
-  } catch (err) {
-    if (err instanceof Deno.errors.NotFound) {
-      return dest;
-    }
-  }
-  const sourceStat = await Deno.lstat(source);
-  if (sourceStat.isDirectory) {
+  if (!dest.includes(SEP)) {
     return dest;
   }
-  const fileName = basename(source);
-  return join(dest, fileName);
+  const sourceStat = await Deno.lstat(source);
+  if (!sourceStat.isFile) {
+    return dest;
+  }
+  if (dest.endsWith(SEP)) {
+    await ensureDir(dest, cpOptions);
+    const fileName = basename(source);
+    return join(dest, fileName);
+  } else {
+    const dir = dirname(dest);
+    await ensureDir(dir, cpOptions);
+    return dest;
+  }
 };
+
+const parseIpnuts = (inputs: string[]) => {
+  if (inputs.length < 2) {
+    throw new Error("Must have at least one source and the destination");
+  }
+  const sources = inputs.slice(0, inputs.length - 1);
+  let dest = inputs[inputs.length - 1];
+  if (sources.length > 1 && !dest.endsWith(SEP)) {
+    dest += SEP;
+  }
+  return [sources, dest] as const;
+};
+
+const isDirPath = (path: string) => path.includes(SEP);
 
 const parseCliOptions = (options: IFlags): CpOptions => {
   assertValidCliOptions(
@@ -96,16 +109,4 @@ const parseCliOptions = (options: IFlags): CpOptions => {
     overwrite: options["force"] as boolean,
     preserveTimestamps: options["preserve"] as boolean,
   };
-};
-
-const ensureDest = async (
-  sources: string[],
-  dest: string,
-  cpOptions: CpOptions,
-) => {
-  const destIsDir = sources.length > 1 || dest.includes(SEP);
-  if (destIsDir && !cpOptions.dry) {
-    const dir = dest.endsWith(SEP) ? dest : dirname(dest);
-    await ensureDir(dir);
-  }
 };

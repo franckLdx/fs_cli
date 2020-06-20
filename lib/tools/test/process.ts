@@ -48,6 +48,7 @@ export async function checkProcess(
       `wrong process std output ${green(actualOutput)}!=${red(expectedOutput)}`,
     )
   );
+
   const actualError = decoder.decode(await p.stderrOutput());
   expectedErrors.forEach((expectedError) =>
     assert(

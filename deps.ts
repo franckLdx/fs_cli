@@ -3,11 +3,11 @@ export {
 } from "https://deno.land/std@0.57.0/testing/asserts.ts";
 
 export {
-  ensureDir,
+  ensureDir as denoEnsureDir,
+  copy as denoCopy,
+  CopyOptions as DenoCopyOptions,
   exists,
   walk,
-  copy,
-  CopyOptions,
 } from "https://deno.land/std@0.57.0/fs/mod.ts";
 
 export {

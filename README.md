@@ -1,7 +1,7 @@
 # fs-cli
  A deno tool to handle directories a files. Inspired by [rimraf](https://www.npmjs.com/package/rimraf) and mkdirp [mkdirp](https://www.npmjs.com/package/mkdirp), fs-cli aims to write build scripts that can run under any shells.
 
- Current release implements [rm](#rm) and [mkdir](#mkdirp) commands, but more will come soon:
+ Current release implements [rm](#rm) and [mkdirp](#mkdirp) commands, but more will come soon:
   * add Empty dir commands
   * add Copy commands
   * add Move commands
@@ -12,7 +12,7 @@
 # Installation
 
 ```sh
-$ deno install --unstable --allow-read --allow-write --allow-env --allow-run -n fs_cli https://deno.land/x/fs_cli@v0.1.0/cli.ts
+$ deno install --unstable --allow-read --allow-write --allow-env --allow-run -n fs_cli https://deno.land/x/fs_cli@v0.5.0/cli.ts
 ```
 The above command will always install the latest version. If you're updating from an older version you might need to run the command with the `-f` flag.
 
@@ -91,6 +91,11 @@ fs-cli cp <source file> <dest dir>/ or fs-cli cp <source file> <dest dir>\
 ```
 fs-cli cp <source dir path> <dest dir path>
 ```
+### Options
+# -f/--force
+Be default the command failed if a file has to be over written. -f/--force option allow to over write existing file
+# -p/--preserve
+if use, set last modification and access times to the ones of the original source files. When not use, timestamp behavior is OS-dependent.
 
 # Global options
 ## quiet mode

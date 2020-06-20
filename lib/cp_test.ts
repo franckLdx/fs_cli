@@ -219,6 +219,44 @@ Deno.test({
 });
 
 Deno.test({
+  name: "copy: copy files to a new directory: directory and files created ",
+  async fn() {
+    let p: Deno.Process | undefined;
+    try {
+      const dir = await makeDirectory();
+      const sourceName = "source";
+      const sourceDir = await makeDirectory(sourceName);
+      const files = await Promise.all([
+        makeFile(join(sourceName, "file1")),
+        makeFile(join(sourceName, "file2")),
+      ]);
+      const destDir = join(dir, "dest");
+      p = await runCpProcess(
+        { paths: [...files, destDir] },
+      );
+      const output = files.map((file) => {
+        const fileName = basename(file);
+        return getCopyingMessage(file, join(destDir, fileName));
+      });
+      await checkProcess(p, {
+        success: true,
+        expectedOutputs: output,
+        expectedErrors: [""],
+      });
+      const destFiles = [
+        join(destDir, "file1"),
+        join(destDir, "file2"),
+      ];
+      for await (const file of destFiles) {
+        await assertFileCreated(file);
+      }
+    } finally {
+      await cleanTest(p);
+    }
+  },
+});
+
+Deno.test({
   name:
     "copy: copy a directory to a new directory: directory created and it's content is copied",
   async fn() {
