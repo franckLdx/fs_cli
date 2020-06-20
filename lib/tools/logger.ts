@@ -2,10 +2,16 @@ import {
   LoggerConfig,
   setupLogger,
   handlers,
+  getLogger,
 } from "../../deps.ts";
 import { GlobalOptions } from "./options.ts";
 
-export async function configLog(option: GlobalOptions) {
+export async function createFsCliLogger(option: GlobalOptions) {
+  await configLog(option);
+  return getLogger();
+}
+
+const configLog = async (option: GlobalOptions) => {
   const handlerName = "console";
   const quiet = option.quiet ?? true;
   const config: LoggerConfig = {
@@ -23,7 +29,7 @@ export async function configLog(option: GlobalOptions) {
       default: config,
     },
   });
-}
+};
 
 const getFormatter = (option: GlobalOptions) => {
   return option.dry ? "[Dry Run] {msg}" : "{msg}";

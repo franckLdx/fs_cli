@@ -1,12 +1,15 @@
 import {
   Command,
   IFlags,
-  getLogger,
   Logger,
-  ensureDir,
 } from "../deps.ts";
-import { configLog } from "./tools/logger.ts";
-import { assertValidCliOptions, GlobalOptions } from "./tools/options.ts";
+import { createFsCliLogger } from "./tools/logger.ts";
+import {
+  assertValidCliOptions,
+  GlobalOptions,
+  parseGlobalOptions,
+} from "./tools/options.ts";
+import { ensureDir } from "./tools/fs.ts";
 
 export function addMkDirpCommand(command: Command<any, any>) {
   return command
@@ -17,31 +20,22 @@ export function addMkDirpCommand(command: Command<any, any>) {
 
 export async function mkDirpCommand(options: IFlags, paths: string[]) {
   const mkDirpOptions = parseCliOptions(options);
-  await configLog(mkDirpOptions);
-  const logger = getLogger();
-  const mkDirp = mkDirpHOF(logger, mkDirpOptions);
+  const logger = await createFsCliLogger(mkDirpOptions);
+  const mkDirp = mkDirHOF(logger, mkDirpOptions);
 
   for await (const path of paths) {
     await mkDirp(path);
   }
 }
 
-type MkdirpOptions = GlobalOptions;
-
-const parseCliOptions = (options: any): MkdirpOptions => {
+const parseCliOptions = (options: IFlags): GlobalOptions => {
   assertValidCliOptions(options);
-  const mkdirpOptions = {
-    dry: options["dry"] as boolean,
-    quiet: options["quiet"] as boolean,
-  };
-  return mkdirpOptions;
+  return parseGlobalOptions(options);
 };
 
-const mkDirpHOF = (logger: Logger, { dry }: MkdirpOptions) => {
+const mkDirHOF = (logger: Logger, options: GlobalOptions) => {
   return async (path: string) => {
     logger.info(`Creating ${path}`);
-    if (!dry) {
-      await ensureDir(path);
-    }
+    await ensureDir(path, options);
   };
 };

@@ -1,4 +1,5 @@
-import { assertEquals, green, red, assert } from "../../../dev_deps.ts";
+import { green, red, assertEquals } from "../../../dev_deps.ts";
+import { assert } from "../../../deps.ts";
 
 export function getPrefixMessage(dryRun: boolean) {
   return dryRun ? "[Dry Run] " : "";
@@ -47,16 +48,21 @@ export async function checkProcess(
       `wrong process std output ${green(actualOutput)}!=${red(expectedOutput)}`,
     )
   );
+
   const actualError = decoder.decode(await p.stderrOutput());
   expectedErrors.forEach((expectedError) =>
     assert(
       actualError.includes(expectedError),
-      `wrong proces error ${green(actualError)}!=${red(expectedError)}`,
+      `wrong proces srd error ${green(actualError)}!=${red(expectedError)}`,
     )
   );
 }
 
-export async function cleanProcess(p: Deno.Process | undefined) {
+export async function cleanProcess<T extends Deno.RunOptions>(
+  p: Deno.Process<T> | undefined,
+) {
   p?.stdin?.close();
+  // p?.stdout?.close();
+  // p?.stderr?.close();
   p?.close();
 }
