@@ -6,7 +6,7 @@ import {
   makeDirectory,
   assertFileCreated,
 } from "./tools/test/fs.ts";
-import { optionsDry, force } from "./tools/test/options.ts";
+import { optionsDry, optionForce } from "./tools/test/options.ts";
 import {
   runProcess,
   checkProcess,
@@ -112,7 +112,7 @@ Deno.test({
       const sourceFile = await makeFile("sourceFile");
       const destFile = await makeFile("destFile");
       p = await runCpProcess(
-        { paths: [sourceFile, destFile], options: force },
+        { paths: [sourceFile, destFile], options: optionForce },
       );
       await checkProcess(p, {
         success: true,
@@ -157,7 +157,7 @@ Deno.test({
     try {
       const dir = await makeDirectory();
       const sourceFile = await makeFile("sourceFile");
-      const destDir = join(dir, "Dir") + "/";
+      const destDir = join(dir, "Dir") + SEP;
       p = await runCpProcess(
         { paths: [sourceFile, destDir], options: optionsDry },
       );
@@ -205,7 +205,7 @@ Deno.test({
       const destFile = await makeFile(join("destDir", "destFile"));
 
       p = await runCpProcess(
-        { paths: [sourceFile, destFile], options: force },
+        { paths: [sourceFile, destFile], options: optionForce },
       );
       await checkProcess(p, {
         success: true,
@@ -221,15 +221,18 @@ Deno.test({
 Deno.test({
   name: "copy: copy files to a new directory: directory and files created ",
   async fn() {
+    const fileNames = ["file1", "file2"];
     let p: Deno.Process | undefined;
     try {
       const dir = await makeDirectory();
       const sourceName = "source";
-      const sourceDir = await makeDirectory(sourceName);
-      const files = await Promise.all([
-        makeFile(join(sourceName, "file1")),
-        makeFile(join(sourceName, "file2")),
-      ]);
+      await makeDirectory(sourceName);
+      const files = await Promise.all(
+        fileNames.map(async (file) => {
+          const filePath = join(sourceName, file);
+          return await makeFile(filePath);
+        }),
+      );
       const destDir = join(dir, "dest");
       p = await runCpProcess(
         { paths: [...files, destDir] },
@@ -243,13 +246,114 @@ Deno.test({
         expectedOutputs: output,
         expectedErrors: [""],
       });
-      const destFiles = [
-        join(destDir, "file1"),
-        join(destDir, "file2"),
-      ];
+      const destFiles = fileNames.map((fileName) => join(destDir, fileName));
       for await (const file of destFiles) {
         await assertFileCreated(file);
       }
+    } finally {
+      await cleanTest(p);
+    }
+  },
+});
+
+Deno.test({
+  name: "copy: copy files to a new directory in dry mode: nothing created",
+  async fn() {
+    let p: Deno.Process | undefined;
+    try {
+      const dir = await makeDirectory();
+      const sourceName = "source";
+      const files = await Promise.all([
+        makeFile(join(sourceName, "file1")),
+        makeFile(join(sourceName, "file2")),
+      ]);
+      const destDir = join(dir, "dest");
+      p = await runCpProcess(
+        { paths: [...files, destDir], options: optionsDry },
+      );
+      const output = files.map((file) => {
+        const fileName = basename(file);
+        return getCopyingMessage(file, join(destDir, fileName), true);
+      });
+      await checkProcess(p, {
+        success: true,
+        expectedOutputs: output,
+        expectedErrors: [""],
+      });
+      await assertNotCreated(destDir);
+    } finally {
+      await cleanTest(p);
+    }
+  },
+});
+
+Deno.test({
+  name:
+    "copy: copy files to a, existing directory with existing file: rejected",
+  async fn() {
+    let p: Deno.Process | undefined;
+    try {
+      const fileNames = ["file1", "file2"];
+      const createFiles = async (dirName: string) =>
+        await Promise.all(
+          fileNames.map(async (fileName) => {
+            const filePath = join(dirName, fileName);
+            return makeFile(filePath);
+          }),
+        );
+      const dir = await makeDirectory();
+      const sourceName = "source";
+      const sourceFiles = await createFiles(sourceName);
+      const destName = "dest";
+      const destDir = join(dir, destName);
+      const destFiles = await createFiles(destName);
+      p = await runCpProcess(
+        { paths: [...sourceFiles, destDir] },
+      );
+      await checkProcess(p, {
+        success: false,
+        expectedOutputs: [""],
+        expectedErrors: [
+          `'${destFiles[0]}' already exists`,
+        ],
+      });
+    } finally {
+      await cleanTest(p);
+    }
+  },
+});
+
+Deno.test({
+  name:
+    "copy: copy files to an existing directory with existing file: overiden",
+  async fn() {
+    let p: Deno.Process | undefined;
+    try {
+      const fileNames = ["file1", "file2"];
+      const createFiles = async (dirName: string) =>
+        await Promise.all(
+          fileNames.map(async (fileName) => {
+            const filePath = join(dirName, fileName);
+            return makeFile(filePath);
+          }),
+        );
+      const dir = await makeDirectory();
+      const sourceName = "source";
+      const sourceFiles = await createFiles(sourceName);
+      const destName = "dest";
+      const destDir = join(dir, destName);
+      p = await runCpProcess(
+        { paths: [...sourceFiles, destDir], options: optionForce },
+      );
+      const output = sourceFiles.map((sourceFile) => {
+        const fileName = basename(sourceFile);
+        return getCopyingMessage(sourceFile, join(destDir, fileName));
+      });
+      await checkProcess(p, {
+        success: true,
+        expectedOutputs: output,
+        expectedErrors: [""],
+      });
     } finally {
       await cleanTest(p);
     }
@@ -384,7 +488,7 @@ Deno.test({
       const destName = "dest";
       const destDir = await makeDirectory(destName);
       p = await runCpProcess(
-        { paths: [sourceDir, destDir], options: force },
+        { paths: [sourceDir, destDir], options: optionForce },
       );
       await checkProcess(p, {
         success: true,
