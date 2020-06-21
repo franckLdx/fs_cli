@@ -7,6 +7,16 @@ import {
   BaseHandler,
 } from "../../deps.ts";
 
+const getLogRecort = (msg: string, args = []) =>
+  new LogRecord(
+    {
+      msg,
+      args: [],
+      level: getLevelByName("INFO"),
+      loggerName: "console",
+    },
+  );
+
 Deno.test({
   name: "Logger: should use relevant handler: not dry mode",
   async fn() {
@@ -15,9 +25,7 @@ Deno.test({
     const handler = logger.handlers[0] as BaseHandler;
     const msg = "fooBar";
     assertEquals(
-      handler.format(
-        new LogRecord(msg, [], getLevelByName("INFO")),
-      ),
+      handler.format(getLogRecort(msg)),
       blue(msg),
     );
   },
@@ -31,9 +39,7 @@ Deno.test({
     const handler = logger.handlers[0] as BaseHandler;
     const msg = "fooBar";
     assertEquals(
-      handler.format(
-        new LogRecord(msg, [], getLevelByName("INFO")),
-      ),
+      handler.format(getLogRecort(msg)),
       blue(`[Dry Run] ${msg}`),
     );
   },

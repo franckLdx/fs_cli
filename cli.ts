@@ -6,7 +6,7 @@ import { addGlobalOptions } from "./lib/tools/options.ts";
 
 const command = new Command()
   .description("fs_cli tools: handle files through command line")
-  .version("0.5.0");
+  .version("0.5.1");
 
 addGlobalOptions(command);
 addCpCommand(command);

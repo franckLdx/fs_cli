@@ -1,2 +1,2 @@
 export const optionsDry = ["-d"];
-export const force = ["--force"];
+export const optionForce = ["--force"];
