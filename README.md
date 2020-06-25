@@ -2,7 +2,6 @@
  A deno tool to handle directories a files. Inspired by [rimraf](https://www.npmjs.com/package/rimraf) and mkdirp [mkdirp](https://www.npmjs.com/package/mkdirp), fs-cli aims to write build scripts that can run under any shells.
 
  Current release implements [rm](#rm), [mkdirp](#mkdirp) and [copy](#cp) commands, but more will come soon:
-  * add glob support to cp
   * add Empty dir commands
   * add Move commands
   * add Rename commands
@@ -36,31 +35,14 @@ For more information see [Deno's installer manual](https://deno.land/manual/tool
 ## rm
 Syntax:
 ```
-fs-cli rm <path or glob 1> <path or glob 2> ... <path or glob N> [--glob-root <path>] [--no-glob-dirs] [--no-glob-files]
+fs-cli rm <path or glob 1> <path or glob 2> ... <path or glob N>
 ```
 Perform an rm -rf on each given directory and file. Globs are also supported.
 If a path does not exist, fs-cli ignores it and processes the next one.
 
-**To use glob intergated search rather than shell glob interpollation, don't forget to use quote to avoid glob being interpreted by sheel use quote: <code>'\*\*/*.tmp'</code> rahter than <code>\*\*/*.tmp**</code>
-
 ### Options
-#### glob-root
-root search for glob
-```
-fs-cli rm <path or glob 1>...<path or glob N> --glob-root <path>
-```
+rm supports [glob options](#glob-options)
 
-#### no-glob-dirs
-Directories are ignored when applying a glob
-```
-fs-cli rm <path or glob 1>...<path or glob N> --no-glob-dirs
-```
-
-#### no-glob-files
-files are ignored when applying a glob
-```
-fs-cli rm <path or glob 1>...<path or glob N> --no-glob-files
-```
 ## mkdirp
 Syntax:
 ```
@@ -71,7 +53,7 @@ Perform an mkdir -p on each given directory.
 ## cp
 Syntax:
 ```
-fs-cli cp <source path1>...<source pathN> <dest>
+fs-cli cp <source path1 or glob1>...<source pathN glob1> <dest>
 ```
 Perform a cp -r. If <dest> includes directories, thos directories are created if they does not exists.
 
@@ -96,13 +78,36 @@ fs-cli cp <source file1> ... <source filen> <dest dir>
 fs-cli cp <source dir path> <dest dir path>
 ```
 
- **Glob are not yet supported by cp commandn but you can use shell glob interpollation.** 
-
 ### Options
+cp supports [glob options](#glob-options)
+
 # force mode: -f/--force
 Be default the command failed if a file has to be over written. -f/--force option allow to over write existing file
 # preserve timestamps: -p/--preserve
 if use, set last modification and access times to the ones of the original source files. When not use, timestamp behavior is OS-dependent.
+
+# Glob Options
+Following are used for [rm](#rm) and [cp](#cp)
+
+**To use glob intergated search rather than shell glob interpollation, don't forget to use quote to avoid glob being interpreted by sheel use quote: <code>'\*\*/*.tmp'</code> rahter than <code>\*\*/*.tmp**</code>
+
+## glob-root
+root search for glob
+```
+fs-cli <command> <path or glob 1>...<path or glob N> --glob-root <path>
+```
+
+## no-glob-dirs
+Directories are ignored when applying a glob
+```
+fs-cli <command> <path or glob 1>...<path or glob N> --no-glob-dirs
+```
+
+## no-glob-files
+files are ignored when applying a glob
+```
+fs-cli <command> <path or glob 1>...<path or glob N> --no-glob-files
+```
 
 # Global options
 ## quiet mode: -q/--quiet
@@ -119,6 +124,9 @@ fs-cli rm <path1> <path2> ... <pathN> -d
 ```
 
 # What's new
+## 0.6.0
+  * cp command now supports glob options
+
 ## 0.5.1
   * cp command
 
