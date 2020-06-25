@@ -141,7 +141,7 @@ Deno.test({
 });
 
 Deno.test({
-  name: "rm: glob",
+  name: "rm: glob root",
   async fn() {
     let p;
     try {
@@ -175,6 +175,10 @@ Deno.test({
     let p;
     try {
       const dirPath = await makeDirectory();
+      await Promise.all([
+        makeFile("foo1.bar"),
+        makeFile("foo2.bar"),
+      ]);
       p = await runRmProcess(
         {
           paths: ["**/*.bar"],

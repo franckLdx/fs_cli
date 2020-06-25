@@ -129,9 +129,10 @@ Deno.test({
   name: "copy: copy a file to a new directory: directory and file created",
   async fn() {
     let p: Deno.Process | undefined;
+    const sourceFileName = "sourceFile";
     try {
       const dir = await makeDirectory();
-      const sourceFile = await makeFile("sourceFile");
+      const sourceFile = await makeFile(sourceFileName);
       const destDir = join(dir, "Dir") + SEP;
       p = await runCpProcess(
         { paths: [sourceFile, destDir] },
@@ -142,7 +143,7 @@ Deno.test({
         expectedErrors: [""],
       });
       await assertDirCreated(destDir);
-      await assertFileCreated(join(destDir, basename(sourceFile)));
+      await assertFileCreated(join(destDir, sourceFileName));
     } finally {
       await cleanTest(p);
     }
@@ -495,6 +496,112 @@ Deno.test({
         expectedOutputs: [getCopyingMessage(sourceDir, destDir)],
         expectedErrors: [""],
       });
+    } finally {
+      await cleanTest(p);
+    }
+  },
+});
+
+Deno.test({
+  name: "cp: glob root",
+  async fn() {
+    let p;
+    try {
+      const sourceDir = await makeDirectory();
+      const sourceFiles = await Promise.all([
+        makeFile("foo1.bar"),
+        makeFile("foo2.bar"),
+      ]);
+      const dest = await makeDirectory("dest");
+      const expectedOutputs = sourceFiles.map(
+        (source) => getCopyingMessage(source, dest),
+      );
+      p = await runCpProcess(
+        { paths: ["**/*.bar", dest], options: ["--glob-root", sourceDir] },
+      );
+      await checkProcess(
+        p,
+        {
+          success: true,
+          expectedOutputs,
+          expectedErrors: [""],
+        },
+      );
+      for await (const file of sourceFiles) {
+        const fileName = basename(file);
+        const destFile = join(dest, fileName);
+        await assertFileCreated(destFile);
+      }
+    } finally {
+      await cleanTest(p);
+    }
+  },
+});
+
+Deno.test({
+  name: "cp: glob excluding files",
+  async fn() {
+    let p;
+    try {
+      const sourcePath = await makeDirectory("source");
+      const sourceFiles = await Promise.all([
+        makeFile("foo1.bar"),
+        makeFile("foo2.bar"),
+      ]);
+      const destPath = await makeDirectory("dest");
+      p = await runCpProcess(
+        {
+          paths: ["**/*.bar", destPath],
+          options: ["--glob-root", sourcePath, "--no-glob-files"],
+        },
+      );
+      await checkProcess(
+        p,
+        {
+          success: true,
+          expectedOutputs: [""],
+          expectedErrors: [""],
+        },
+      );
+      for await (const file of sourceFiles) {
+        const fileName = basename(file);
+        const destFile = join(destPath, fileName);
+        await assertNotCreated(destFile);
+      }
+    } finally {
+      await cleanTest(p);
+    }
+  },
+});
+
+Deno.test({
+  name: "cp: glob excluding dirs",
+  async fn() {
+    let p;
+    const dirNames = ["foo", "fooBar", "fooBaz"];
+    try {
+      const sourcePath = await makeDirectory();
+      const destPath = await makeDirectory("dest");
+      for await (const name of dirNames) {
+        await makeDirectory(name);
+      }
+      p = await runCpProcess(
+        {
+          paths: [`**/foo*`, destPath],
+          options: ["--glob-root", sourcePath, "--no-glob-dirs"],
+        },
+      );
+      await checkProcess(
+        p,
+        {
+          success: true,
+          expectedOutputs: [""],
+          expectedErrors: [""],
+        },
+      );
+      for await (const name of dirNames) {
+        await assertNotCreated(join(destPath, name));
+      }
     } finally {
       await cleanTest(p);
     }

@@ -10,28 +10,20 @@ import {
   assertValidCliOptions,
   parseGlobalOptions,
 } from "./tools/options.ts";
-import { search, SearchOptions } from "./tools/search.ts";
+import {
+  search,
+  SearchOptions,
+  searchOptionsName,
+  parseSearchOptions,
+  addSearchOptions,
+} from "./tools/search.ts";
 
 export function addRmCommand(command: Command<any, any>) {
-  return command
+  command
     .command("rm <paths...:string>")
-    .description("rm -rf on each file and directory")
-    .option(
-      "--glob-root [glob-root:string]",
-      "root for the glob search",
-      { default: "." },
-    )
-    .option(
-      "--glob-dirs [glob-dirs:boolean]",
-      "include directories in the glob search",
-      { default: true },
-    )
-    .option(
-      "--glob-files [glob-files:boolean]",
-      "include files in the glob search",
-      { default: true },
-    )
-    .action(rmCommand);
+    .description("rm -rf on each file and directory");
+  addSearchOptions(command);
+  command.action(rmCommand);
 }
 
 type RmOptions = GlobalOptions & SearchOptions;
@@ -62,15 +54,11 @@ const removeHOF = (logger: Logger, { dry }: GlobalOptions) => {
 const parseCliOptions = (options: IFlags): RmOptions => {
   assertValidCliOptions(
     options,
-    "globRoot",
-    "globDirs",
-    "globFiles",
+    ...searchOptionsName,
   );
   const rmOptions = {
     ...parseGlobalOptions(options),
-    root: options["globRoot"] as string,
-    includeDirs: options["globDirs"] as boolean,
-    includeFiles: options["globFiles"] as boolean,
+    ...parseSearchOptions(options),
   };
   if (!rmOptions.includeFiles && !rmOptions.includeDirs) {
     throw new Error("Without files and dirs, won't find much to delete !");
