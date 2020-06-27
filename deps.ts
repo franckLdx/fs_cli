@@ -8,7 +8,7 @@ export {
   CopyOptions as DenoCopyOptions,
   exists,
   walk,
-  emptyDir,
+  emptyDir as denoEmptyDir,
 } from "https://deno.land/std@0.58.0/fs/mod.ts";
 
 export {

@@ -26,6 +26,7 @@ export function getDeletingMsgs(paths: string[], dryRun = false) {
 
 Deno.test(
   {
+    only: false,
     name: "rm: path exist, quiet mode -> sucess without output",
     async fn() {
       let p: Deno.Process | undefined;
@@ -45,6 +46,7 @@ Deno.test(
 );
 
 Deno.test({
+  only: false,
   name: "rm: path exist, no quiet -> sucess with output",
   async fn() {
     let p;
@@ -67,6 +69,7 @@ Deno.test({
 });
 
 Deno.test({
+  only: false,
   name: "rm: nothing when path does not exist, quiet -> sucess without output",
   async fn() {
     let p;
@@ -89,6 +92,7 @@ Deno.test({
 });
 
 Deno.test({
+  only: false,
   name: "rm: nothing when path does not exist, not quiet -> sucess with output",
   async fn() {
     let p;
@@ -111,6 +115,7 @@ Deno.test({
 });
 
 Deno.test({
+  only: false,
   name: "rm: mix path that exist and path that exist",
   async fn() {
     let p;
@@ -141,6 +146,7 @@ Deno.test({
 });
 
 Deno.test({
+  only: false,
   name: "rm: glob root",
   async fn() {
     let p;
@@ -170,6 +176,7 @@ Deno.test({
 });
 
 Deno.test({
+  only: false,
   name: "rm: glob excluding files",
   async fn() {
     let p;
@@ -200,6 +207,7 @@ Deno.test({
 });
 
 Deno.test({
+  only: false,
   name: "rm: glob excluding dirs",
   async fn() {
     let p;
@@ -233,6 +241,7 @@ Deno.test({
 });
 
 Deno.test({
+  only: false,
   name: "rm: dryRun -> nothing deleted",
   async fn() {
     let p;

@@ -1,10 +1,11 @@
-import { Command, IFlags, Logger, emptyDir } from "../deps.ts";
+import { Command, IFlags, Logger, denoEmptyDir } from "../deps.ts";
 import {
   GlobalOptions,
   assertValidCliOptions,
   parseGlobalOptions,
 } from "./tools/options.ts";
 import { createFsCliLogger } from "./tools/logger.ts";
+import { optionsDry } from "./tools/test/options.ts";
 
 export function addEmptyDirCommand(command: Command<any, any>) {
   return command
@@ -31,6 +32,8 @@ const parseCliOptions = (options: IFlags): GlobalOptions => {
 const emptyDirHOF = (logger: Logger, options: GlobalOptions) => {
   return async (path: string) => {
     logger.info(`Emptying ${path}`);
-    await emptyDir(path);
+    if (!options.dry) {
+      await denoEmptyDir(path);
+    }
   };
 };
