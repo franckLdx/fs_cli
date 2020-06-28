@@ -2,6 +2,8 @@ import {
   makeFile,
   makeDirectory,
   assertExists,
+  makeFiles,
+  makeDirectories,
 } from "./tools/test/fs.ts";
 import { cleanTest } from "./tools/test/misc.ts";
 import {
@@ -152,9 +154,9 @@ Deno.test({
     let p;
     try {
       const dirPath = await makeDirectory();
-      const paths = await Promise.all([
-        makeFile("foo1.bar"),
-        makeFile("foo2.bar"),
+      const paths = await makeFiles([
+        "foo1.bar",
+        "foo2.bar",
       ]);
       const expectedOutputs = getDeletingMsgs(paths);
       p = await runRmProcess(
@@ -182,9 +184,9 @@ Deno.test({
     let p;
     try {
       const dirPath = await makeDirectory();
-      await Promise.all([
-        makeFile("foo1.bar"),
-        makeFile("foo2.bar"),
+      await makeFiles([
+        "foo1.bar",
+        "foo2.bar",
       ]);
       p = await runRmProcess(
         {
@@ -213,11 +215,11 @@ Deno.test({
     let p;
     try {
       const dirPath = await makeDirectory();
-      await Promise.all(
+      await makeDirectories(
         [
-          makeDirectory("foo"),
-          makeDirectory("fooBar"),
-          makeDirectory("fooBaz"),
+          "foo",
+          "fooBar",
+          "fooBaz",
         ],
       );
       p = await runRmProcess(

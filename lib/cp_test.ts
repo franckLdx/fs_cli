@@ -5,6 +5,8 @@ import {
   assertNotCreated,
   makeDirectory,
   assertFileCreated,
+  makeFiles,
+  makeDirectories,
 } from "./tools/test/fs.ts";
 import { optionsDry, optionForce } from "./tools/test/options.ts";
 import {
@@ -317,11 +319,8 @@ Deno.test(
       try {
         const fileNames = ["file1", "file2"];
         const createFiles = async (dirName: string) =>
-          await Promise.all(
-            fileNames.map(async (fileName) => {
-              const filePath = join(dirName, fileName);
-              return makeFile(filePath);
-            }),
+          await makeFiles(
+            fileNames.map((fileName) => join(dirName, fileName)),
           );
         const dir = await makeDirectory();
         const sourceName = "source";
@@ -356,11 +355,8 @@ Deno.test(
       try {
         const fileNames = ["file1", "file2"];
         const createFiles = async (dirName: string) =>
-          await Promise.all(
-            fileNames.map(async (fileName) => {
-              const filePath = join(dirName, fileName);
-              return makeFile(filePath);
-            }),
+          await makeFiles(
+            fileNames.map((fileName) => join(dirName, fileName)),
           );
         const dir = await makeDirectory();
         const sourceName = "source";
@@ -546,9 +542,9 @@ Deno.test({
     let p;
     try {
       const sourceDir = await makeDirectory();
-      const sourceFiles = await Promise.all([
-        makeFile("foo1.bar"),
-        makeFile("foo2.bar"),
+      const sourceFiles = await makeFiles([
+        "foo1.bar",
+        "foo2.bar",
       ]);
       const dest = await makeDirectory("dest");
       const expectedOutputs = sourceFiles.map(
@@ -583,9 +579,9 @@ Deno.test({
     let p;
     try {
       const sourcePath = await makeDirectory("source");
-      const sourceFiles = await Promise.all([
-        makeFile("foo1.bar"),
-        makeFile("foo2.bar"),
+      const sourceFiles = await makeFiles([
+        "foo1.bar",
+        "foo2.bar",
       ]);
       const destPath = await makeDirectory("dest");
       p = await runCpProcess(
@@ -622,9 +618,7 @@ Deno.test({
     try {
       const sourcePath = await makeDirectory();
       const destPath = await makeDirectory("dest");
-      for await (const name of dirNames) {
-        await makeDirectory(name);
-      }
+      await makeDirectories(dirNames);
       p = await runCpProcess(
         {
           paths: [`**/foo*`, destPath],
