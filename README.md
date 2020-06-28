@@ -2,7 +2,6 @@
  A deno tool to handle directories a files. Inspired by [rimraf](https://www.npmjs.com/package/rimraf) and mkdirp [mkdirp](https://www.npmjs.com/package/mkdirp), fs-cli aims to write build scripts that can run under any shells.
 
  Current release implements [rm](#rm), [mkdirp](#mkdirp) and [copy](#cp) commands, but more will come soon:
-  * add Empty dir commands
   * add Move commands
   * add Rename commands
   * add messages at the end of execution (total number of deletion:copy...)
@@ -32,24 +31,6 @@ $ deno install --unstable --allow-read --allow-write --allow-env --allow-run -n 
 For more information see [Deno's installer manual](https://deno.land/manual/tools/script_installer)
 
 # Commands
-## rm
-Syntax:
-```
-fs-cli rm <path or glob 1> <path or glob 2> ... <path or glob N>
-```
-Perform an rm -rf on each given directory and file. Globs are also supported.
-If a path does not exist, fs-cli ignores it and processes the next one.
-
-### Options
-rm supports [glob options](#glob-options)
-
-## mkdirp
-Syntax:
-```
-fs-cli mkdirp <path1> <path2> <path3>
-```
-Perform an mkdir -p on each given directory.
-
 ## cp
 Syntax:
 ```
@@ -85,6 +66,24 @@ cp supports [glob options](#glob-options)
 Be default the command failed if a file has to be over written. -f/--force option allow to over write existing file
 # preserve timestamps: -p/--preserve
 if use, set last modification and access times to the ones of the original source files. When not use, timestamp behavior is OS-dependent.
+
+## mkdirp
+Syntax:
+```
+fs-cli mkdirp <path1> <path2> <path3>
+```
+Perform an mkdir -p on each given directory.
+
+## rm
+Syntax:
+```
+fs-cli rm <path or glob 1> <path or glob 2> ... <path or glob N>
+```
+Perform an rm -rf on each given directory and file. Globs are also supported.
+If a path does not exist, fs-cli ignores it and processes the next one.
+
+### Options
+rm supports [glob options](#glob-options)
 
 # Glob Options
 Following are used for [rm](#rm) and [cp](#cp)
@@ -124,6 +123,10 @@ fs-cli rm <path1> <path2> ... <pathN> -d
 ```
 
 # What's new
+## 0.7.0
+  * Added empty command
+  * use lib std 0.59.0
+
 ## 0.6.0
   * cp command now supports glob options
 
