@@ -2,6 +2,8 @@ import {
   makeFile,
   makeDirectory,
   assertExists,
+  makeFiles,
+  makeDirectories,
 } from "./tools/test/fs.ts";
 import { cleanTest } from "./tools/test/misc.ts";
 import {
@@ -26,6 +28,7 @@ export function getDeletingMsgs(paths: string[], dryRun = false) {
 
 Deno.test(
   {
+    only: false,
     name: "rm: path exist, quiet mode -> sucess without output",
     async fn() {
       let p: Deno.Process | undefined;
@@ -45,6 +48,7 @@ Deno.test(
 );
 
 Deno.test({
+  only: false,
   name: "rm: path exist, no quiet -> sucess with output",
   async fn() {
     let p;
@@ -67,6 +71,7 @@ Deno.test({
 });
 
 Deno.test({
+  only: false,
   name: "rm: nothing when path does not exist, quiet -> sucess without output",
   async fn() {
     let p;
@@ -89,6 +94,7 @@ Deno.test({
 });
 
 Deno.test({
+  only: false,
   name: "rm: nothing when path does not exist, not quiet -> sucess with output",
   async fn() {
     let p;
@@ -111,6 +117,7 @@ Deno.test({
 });
 
 Deno.test({
+  only: false,
   name: "rm: mix path that exist and path that exist",
   async fn() {
     let p;
@@ -141,14 +148,15 @@ Deno.test({
 });
 
 Deno.test({
+  only: false,
   name: "rm: glob root",
   async fn() {
     let p;
     try {
       const dirPath = await makeDirectory();
-      const paths = await Promise.all([
-        makeFile("foo1.bar"),
-        makeFile("foo2.bar"),
+      const paths = await makeFiles([
+        "foo1.bar",
+        "foo2.bar",
       ]);
       const expectedOutputs = getDeletingMsgs(paths);
       p = await runRmProcess(
@@ -170,14 +178,15 @@ Deno.test({
 });
 
 Deno.test({
+  only: false,
   name: "rm: glob excluding files",
   async fn() {
     let p;
     try {
       const dirPath = await makeDirectory();
-      await Promise.all([
-        makeFile("foo1.bar"),
-        makeFile("foo2.bar"),
+      await makeFiles([
+        "foo1.bar",
+        "foo2.bar",
       ]);
       p = await runRmProcess(
         {
@@ -200,16 +209,17 @@ Deno.test({
 });
 
 Deno.test({
+  only: false,
   name: "rm: glob excluding dirs",
   async fn() {
     let p;
     try {
       const dirPath = await makeDirectory();
-      await Promise.all(
+      await makeDirectories(
         [
-          makeDirectory("foo"),
-          makeDirectory("fooBar"),
-          makeDirectory("fooBaz"),
+          "foo",
+          "fooBar",
+          "fooBaz",
         ],
       );
       p = await runRmProcess(
@@ -233,6 +243,7 @@ Deno.test({
 });
 
 Deno.test({
+  only: false,
   name: "rm: dryRun -> nothing deleted",
   async fn() {
     let p;

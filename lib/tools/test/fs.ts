@@ -8,6 +8,14 @@ import { exists, join, basename, dirname } from "../../../deps.ts";
 
 let tmpDirectory: string | undefined;
 
+export async function makeDirectories(dirsPath: string[]) {
+  let fullDirsPath = [];
+  for await (const dirPath of dirsPath) {
+    fullDirsPath.push(await makeDirectory(dirPath));
+  }
+  return fullDirsPath;
+}
+
 export async function makeDirectory(path?: string) {
   if (!tmpDirectory) {
     tmpDirectory = await Deno.makeTempDir({ prefix: "fs_cli_" });
@@ -18,6 +26,14 @@ export async function makeDirectory(path?: string) {
     await ensureDir(result);
   }
   return result;
+}
+
+export async function makeFiles(filesPath: string[]) {
+  let fullFilesPath = [];
+  for await (const filePath of filesPath) {
+    fullFilesPath.push(await makeFile(filePath));
+  }
+  return fullFilesPath;
 }
 
 export async function makeFile(filePath: string) {

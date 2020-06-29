@@ -1,6 +1,6 @@
 export {
   assert,
-} from "https://deno.land/std@0.58.0/testing/asserts.ts";
+} from "https://deno.land/std@0.59.0/testing/asserts.ts";
 
 export {
   ensureDir as denoEnsureDir,
@@ -8,7 +8,8 @@ export {
   CopyOptions as DenoCopyOptions,
   exists,
   walk,
-} from "https://deno.land/std@0.58.0/fs/mod.ts";
+  emptyDir as denoEmptyDir,
+} from "https://deno.land/std@0.59.0/fs/mod.ts";
 
 export {
   isGlob,
@@ -17,20 +18,20 @@ export {
   dirname,
   basename,
   SEP,
-} from "https://deno.land/std@0.58.0/path/mod.ts";
+} from "https://deno.land/std@0.59.0/path/mod.ts";
 
 export {
   setup as setupLogger,
   getLogger,
   LoggerConfig,
   handlers,
-} from "https://deno.land/std@0.58.0/log/mod.ts";
+} from "https://deno.land/std@0.59.0/log/mod.ts";
 export {
   Logger,
   LogRecord,
-} from "https://deno.land/std@0.58.0/log/logger.ts";
-export { BaseHandler } from "https://deno.land/std@0.58.0/log/handlers.ts";
-export { getLevelByName } from "https://deno.land/std@0.58.0/log/levels.ts";
+} from "https://deno.land/std@0.59.0/log/logger.ts";
+export { BaseHandler } from "https://deno.land/std@0.59.0/log/handlers.ts";
+export { getLevelByName } from "https://deno.land/std@0.59.0/log/levels.ts";
 
 export {
   Command,

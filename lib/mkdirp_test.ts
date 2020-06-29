@@ -20,6 +20,7 @@ export function getCreatingMsgs(paths: string[], dryRun = false) {
 }
 
 Deno.test({
+  only: false,
   name: "mkdirp: should create a dir",
   async fn() {
     let p: Deno.Process | undefined;
@@ -40,6 +41,7 @@ Deno.test({
 });
 
 Deno.test({
+  only: false,
   name: "mkdirp: should create dirs",
   async fn() {
     let p: Deno.Process | undefined;
@@ -60,6 +62,7 @@ Deno.test({
 });
 
 Deno.test({
+  only: false,
   name: "mkdirp: in dry mode, should not should create dirs",
   async fn() {
     let p: Deno.Process | undefined;
