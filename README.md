@@ -1,13 +1,20 @@
 # fs-cli
  A deno tool to handle directories a files. Inspired by [rimraf](https://www.npmjs.com/package/rimraf) and mkdirp [mkdirp](https://www.npmjs.com/package/mkdirp), fs-cli aims to write build scripts that can run under any shells.
 
- Current release implements [rm](#rm), [mkdirp](#mkdirp) and [copy](#cp) commands, but more will come soon:
-  * add Move commands
-  * add Rename commands
-  * add messages at the end of execution (total number of deletion:copy...)
-  * add follow Symlinks options to glob search
+### Table of content
 
-# Installation
+- [Installation](#Installation)
+- [Commands](#commands) 
+  - [cp](#cp)
+  - [emptyDir](#emptydir)
+  - [mkdirp](#mkdirp)
+  - [rm](#rm)
+- [Options for glob search](#glob-options)
+- [Global options](#global-options)
+- [What's new](#whats-new)
+- [Todo](#todo)
+
+ # Installation
 
 ```sh
 $ deno install --unstable --allow-read --allow-write --allow-env --allow-run -n fs_cli https://deno.land/x/fs_cli@v0.5.1/cli.ts
@@ -66,6 +73,15 @@ cp supports [glob options](#glob-options)
 Be default the command failed if a file has to be over written. -f/--force option allow to over write existing file
 # preserve timestamps: -p/--preserve
 if use, set last modification and access times to the ones of the original source files. When not use, timestamp behavior is OS-dependent.
+
+## emptyDir
+Syntax:
+```
+fs-cli emptyDir <dir1>...<dirn>
+```
+Ensures that each dir is empty.
+Deletes directory contents if the directory is not empty.
+If the directory does not exist, it is created.
 
 ## mkdirp
 Syntax:
@@ -135,3 +151,8 @@ fs-cli rm <path1> <path2> ... <pathN> -d
 
 ## 0.4.0
   * mkdirp command
+
+# Todo
+  * add messages at the end of execution (total number of deletion:copy...)
+  * add follow Symlinks options to glob search
+
