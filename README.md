@@ -139,6 +139,11 @@ fs-cli rm <path1> <path2> ... <pathN> -d
 ```
 
 # What's new
+## 0.7.1
+  * use deno 1.2.0
+  * use lib std 0.61.0
+  * use cliffy 0.11.0
+
 ## 0.7.0
   * Added empty command
   * use lib std 0.59.0
