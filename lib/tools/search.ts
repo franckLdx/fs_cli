@@ -1,4 +1,4 @@
-import { isGlob, globToRegExp, walk, IFlags, Command } from "../../deps.ts";
+import { isGlob, globToRegExp, walk, Command } from "../../deps.ts";
 
 export function addSearchOptions(command: Command<any, any>) {
   command.option(
@@ -25,7 +25,7 @@ export interface SearchOptions {
   includeFiles: boolean;
 }
 
-export function parseSearchOptions(options: IFlags): SearchOptions {
+export function parseSearchOptions(options: any): SearchOptions {
   return {
     root: options["globRoot"] as string,
     includeDirs: options["globDirs"] as boolean,

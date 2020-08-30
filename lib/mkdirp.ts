@@ -1,6 +1,5 @@
 import {
   Command,
-  IFlags,
   Logger,
 } from "../deps.ts";
 import { createFsCliLogger } from "./tools/logger.ts";
@@ -18,7 +17,7 @@ export function addMkDirpCommand(command: Command<any, any>) {
     .description("mkdir -p an each path");
 }
 
-export async function mkDirpCommand(options: IFlags, paths: string[]) {
+export async function mkDirpCommand(options: any, paths: string[]) {
   const mkDirpOptions = parseCliOptions(options);
   const logger = await createFsCliLogger(mkDirpOptions);
   const mkDirp = mkDirHOF(logger, mkDirpOptions);
@@ -28,7 +27,7 @@ export async function mkDirpCommand(options: IFlags, paths: string[]) {
   }
 }
 
-const parseCliOptions = (options: IFlags): GlobalOptions => {
+const parseCliOptions = (options: any): GlobalOptions => {
   assertValidCliOptions(options);
   return parseGlobalOptions(options);
 };

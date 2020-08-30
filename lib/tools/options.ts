@@ -1,4 +1,4 @@
-import { Command, ICommandOption, IFlags } from "../../deps.ts";
+import { Command, ICommandOption } from "../../deps.ts";
 
 export interface GlobalOptions {
   dry: boolean;
@@ -16,7 +16,7 @@ export function addGlobalOptions(command: Command<any, any>) {
 }
 
 export function assertValidCliOptions<T>(
-  options: IFlags,
+  options: any,
   ...keys: Array<string>
 ) {
   for (const key of ["quiet", "dry", ...keys]) {
@@ -26,7 +26,7 @@ export function assertValidCliOptions<T>(
   }
 }
 
-export function parseGlobalOptions(options: IFlags): GlobalOptions {
+export function parseGlobalOptions(options: any): GlobalOptions {
   return {
     dry: options["dry"] as boolean,
     quiet: options["quiet"] as boolean,
