@@ -1,6 +1,5 @@
 import {
   Command,
-  IFlags,
   SEP,
   join,
   basename,
@@ -42,7 +41,7 @@ export function addCpCommand(command: Command<any, any>) {
 
 type CpOptions = GlobalOptions & DenoCopyOptions & SearchOptions;
 
-async function cpCommand(options: IFlags, inputs: string[]) {
+async function cpCommand(options: any, inputs: string[]) {
   const cpOptions = parseCliOptions(options);
   const logger = await createFsCliLogger(cpOptions);
 
@@ -105,7 +104,7 @@ const parseIpnuts = async (inputs: string[], options: CpOptions) => {
   return [sources, dest] as const;
 };
 
-const parseCliOptions = (options: IFlags): CpOptions => {
+const parseCliOptions = (options: any): CpOptions => {
   assertValidCliOptions(
     options,
     "force",

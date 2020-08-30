@@ -1,4 +1,4 @@
-import { Command, IFlags, Logger, denoEmptyDir } from "../deps.ts";
+import { Command, Logger, denoEmptyDir } from "../deps.ts";
 import {
   GlobalOptions,
   assertValidCliOptions,
@@ -14,7 +14,7 @@ export function addEmptyDirCommand(command: Command<any, any>) {
     .description("mkdir -p an each path");
 }
 
-async function emptyDirCommand(options: IFlags, paths: string[]) {
+async function emptyDirCommand(options: any, paths: string[]) {
   const emptyDirOptions = parseCliOptions(options);
   const logger = await createFsCliLogger(emptyDirOptions);
   const emptyDir = emptyDirHOF(logger, emptyDirOptions);
@@ -24,7 +24,7 @@ async function emptyDirCommand(options: IFlags, paths: string[]) {
   }
 }
 
-const parseCliOptions = (options: IFlags): GlobalOptions => {
+const parseCliOptions = (options: any): GlobalOptions => {
   assertValidCliOptions(options);
   return parseGlobalOptions(options);
 };

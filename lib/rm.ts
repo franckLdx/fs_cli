@@ -1,5 +1,4 @@
 import {
-  IFlags,
   exists,
   Command,
   Logger,
@@ -28,7 +27,7 @@ export function addRmCommand(command: Command<any, any>) {
 
 type RmOptions = GlobalOptions & SearchOptions;
 
-async function rmCommand(options: IFlags, inputs: string[]) {
+async function rmCommand(options: any, inputs: string[]) {
   const rmOptions = parseCliOptions(options);
   const logger = await createFsCliLogger(rmOptions);
   const remove = removeHOF(logger, rmOptions);
@@ -51,7 +50,7 @@ const removeHOF = (logger: Logger, { dry }: GlobalOptions) => {
   };
 };
 
-const parseCliOptions = (options: IFlags): RmOptions => {
+const parseCliOptions = (options: any): RmOptions => {
   assertValidCliOptions(
     options,
     ...searchOptionsName,
