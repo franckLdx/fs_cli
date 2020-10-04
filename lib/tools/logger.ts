@@ -4,7 +4,7 @@ import {
   handlers,
   getLogger,
 } from "../../deps.ts";
-import { GlobalOptions } from "./options.ts";
+import type { GlobalOptions } from "./options.ts";
 
 export async function createFsCliLogger(option: GlobalOptions) {
   await configLog(option);

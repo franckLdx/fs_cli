@@ -3,7 +3,8 @@ import {
   denoCopy,
   DenoCopyOptions,
 } from "../../deps.ts";
-import { GlobalOptions } from "./options.ts";
+
+import type { GlobalOptions } from "./options.ts";
 
 export async function ensureDir(path: string, { dry }: GlobalOptions) {
   if (!dry) {
