@@ -1,4 +1,4 @@
-import { Command, ICommandOption } from "../../deps.ts";
+import type { Command, ICommandOption } from "../../deps.ts";
 
 export interface GlobalOptions {
   dry: boolean;

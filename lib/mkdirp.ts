@@ -1,4 +1,4 @@
-import {
+import type {
   Command,
   Logger,
 } from "../deps.ts";
