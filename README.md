@@ -139,7 +139,11 @@ fs-cli rm <path1> <path2> ... <pathN> -d
 ```
 
 # What's new
-## 0.7.3
+## 0.7.5
+  * use deno 1.5.1
+  * use lib std 0.76.0
+
+## 0.7.4
   * use deno 1.4.5
   * use lib std 0.74.0
 
