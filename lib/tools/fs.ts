@@ -26,3 +26,15 @@ export async function copy(
     await denoCopy(source, dest, options.copy);
   }
 }
+
+// Deno's NotFound exception message is bizare and not understable  
+export async function lstat(path: string) {
+  try {
+    return await Deno.lstat(path);
+  } catch (err) {
+    if (err instanceof Deno.errors.NotFound) {
+      throw new Deno.errors.NotFound(`File not found ${path}`);
+    }
+    throw err;
+  }
+}

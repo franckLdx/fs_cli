@@ -15,6 +15,7 @@ export function runProcess(command: string) {
         "run",
         "--allow-read",
         "--allow-write",
+        "--unstable",
         "cli.ts",
         command,
         ...paths,

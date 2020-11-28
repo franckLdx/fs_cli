@@ -5,7 +5,6 @@ import {
   parseGlobalOptions,
 } from "./tools/options.ts";
 import { createFsCliLogger } from "./tools/logger.ts";
-import { optionsDry } from "./tools/test/options.ts";
 
 export function addEmptyDirCommand(command: Command<any, any>) {
   return command
@@ -14,7 +13,7 @@ export function addEmptyDirCommand(command: Command<any, any>) {
     .description("mkdir -p an each path");
 }
 
-async function emptyDirCommand(options: any, paths: string[]) {
+export async function emptyDirCommand(options: any, paths: string[]) {
   const emptyDirOptions = parseCliOptions(options);
   const logger = await createFsCliLogger(emptyDirOptions);
   const emptyDir = emptyDirHOF(logger, emptyDirOptions);

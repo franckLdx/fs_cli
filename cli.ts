@@ -7,7 +7,7 @@ import { addEmptyDirCommand } from "./lib/emptyDir.ts";
 
 const command = new Command()
   .description("fs_cli tools: handle files through command line")
-  .version("0.7.4");
+  .version("0.7.7");
 
 addGlobalOptions(command);
 

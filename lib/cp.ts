@@ -13,7 +13,7 @@ import {
   parseGlobalOptions,
 } from "./tools/options.ts";
 import { createFsCliLogger } from "./tools/logger.ts";
-import { ensureDir, copy, CopyOptions } from "./tools/fs.ts";
+import { ensureDir, copy, CopyOptions, lstat } from "./tools/fs.ts";
 import {
   SearchOptions,
   searchOptionsName,
@@ -47,6 +47,7 @@ async function cpCommand(options: any, inputs: string[]) {
 
   const [sources, dest] = await parseIpnuts(inputs, cpOptions);
 
+  
   const doCopy = copyHOF(logger, cpOptions);
   for await (const source of sources) {
     await doCopy(source, dest);
@@ -76,7 +77,7 @@ const getActualDest = async (
   if (!dest.includes(SEP)) {
     return dest;
   }
-  const sourceStat = await Deno.lstat(source);
+  const sourceStat = await lstat(source);
   if (!sourceStat.isFile) {
     return dest;
   }
