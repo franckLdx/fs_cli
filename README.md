@@ -3,7 +3,7 @@
  A deno tool to handle directories a files. Inspired by [rimraf](https://www.npmjs.com/package/rimraf) and mkdirp [mkdirp](https://www.npmjs.com/package/mkdirp), fs-cli aims to write build scripts that can run under any shells.
 
 [![deno land](http://img.shields.io/badge/available%20on-deno.land/x-lightgrey.svg?logo=deno&labelColor=black)](https://deno.land/x/fs_cli) 
-[![license](https://img.shields.io/badge/license-MIT-green)](https://deno.land/x/fs_cli@v0.7.7/LICENSE) 
+[![license](https://img.shields.io/badge/license-MIT-green)](https://github.com/franckLdx/fs_cli/blob/master/LICENSE)
 
 ### Table of content
 
