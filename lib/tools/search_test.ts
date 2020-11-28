@@ -62,7 +62,7 @@ Deno.test({
         [...inputs, "**/*.json"],
         { root: dirPath, includeFiles: true, includeDirs: true },
       );
-      assertEquals(actualPaths, [...inputs, ...sortPath(paths)]);
+      assertEquals(sortPath(actualPaths), sortPath([...inputs, ...paths]));
     } finally {
       await cleanDir();
     }
