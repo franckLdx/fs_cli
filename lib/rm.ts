@@ -3,7 +3,7 @@ import {
   Command,
   Logger,
 } from "../deps.ts";
-import { createFsCliLogger } from "./tools/logger.ts";
+import { createFsCliLogger, displayResult } from "./tools/logger.ts";
 import {
   GlobalOptions,
   assertValidCliOptions,
@@ -34,19 +34,26 @@ async function rmCommand(options: any, inputs: string[]) {
 
   const paths = await search(inputs, rmOptions);
 
+  let actualyRemoved = 0;
   for await (const path of paths) {
-    await remove(path);
+    if (await remove(path)) {
+      actualyRemoved++;
+    }
   }
+
+  displayResult("Removed", actualyRemoved, rmOptions);
 }
 
 const removeHOF = (logger: Logger, { dry }: GlobalOptions) => {
   return async (path: string) => {
-    if (await exists(path)) {
-      logger.info(`Deleting ${path}`);
-      if (!dry) {
-        await Deno.remove(path, { recursive: true });
-      }
+    if (!(await exists(path))) {
+      return false
     }
+    logger.info(`Deleting ${path}`);
+    if (!dry) {
+      await Deno.remove(path, { recursive: true });
+    }
+    return true;
   };
 };
 

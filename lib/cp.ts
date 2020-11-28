@@ -6,13 +6,14 @@ import {
   dirname,
   Logger,
   DenoCopyOptions,
+  badge,
 } from "../deps.ts";
 import {
   GlobalOptions,
   assertValidCliOptions,
   parseGlobalOptions,
 } from "./tools/options.ts";
-import { createFsCliLogger } from "./tools/logger.ts";
+import { createFsCliLogger, displayResult } from "./tools/logger.ts";
 import { ensureDir, copy, CopyOptions, lstat } from "./tools/fs.ts";
 import {
   SearchOptions,
@@ -47,11 +48,12 @@ async function cpCommand(options: any, inputs: string[]) {
 
   const [sources, dest] = await parseIpnuts(inputs, cpOptions);
 
-  
   const doCopy = copyHOF(logger, cpOptions);
   for await (const source of sources) {
     await doCopy(source, dest);
   }
+
+  displayResult("Copied", sources.length, cpOptions);
 }
 
 const copyHOF = (logger: Logger, cpOptions: CpOptions) => {

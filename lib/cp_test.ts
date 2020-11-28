@@ -78,6 +78,7 @@ Deno.test({
         success: true,
         expectedOutputs: [
           getCopyingMessage(sourceFile, destFile, true),
+          "Skipped", "1"
         ],
         expectedErrors: [""],
       });
@@ -123,7 +124,7 @@ Deno.test({
       );
       await checkProcess(p, {
         success: true,
-        expectedOutputs: [getCopyingMessage(sourceFile, destFile)],
+        expectedOutputs: [getCopyingMessage(sourceFile, destFile), "Copied", "1"],
         expectedErrors: [""],
       });
     } finally {

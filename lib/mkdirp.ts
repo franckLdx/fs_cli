@@ -2,7 +2,7 @@ import type {
   Command,
   Logger,
 } from "../deps.ts";
-import { createFsCliLogger } from "./tools/logger.ts";
+import { createFsCliLogger, displayResult } from "./tools/logger.ts";
 import {
   assertValidCliOptions,
   GlobalOptions,
@@ -25,6 +25,8 @@ export async function mkDirpCommand(options: any, paths: string[]) {
   for await (const path of paths) {
     await mkDirp(path);
   }
+
+  displayResult("Created", paths.length, mkDirpOptions);
 }
 
 const parseCliOptions = (options: any): GlobalOptions => {

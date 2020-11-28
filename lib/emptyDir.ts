@@ -4,7 +4,7 @@ import {
   assertValidCliOptions,
   parseGlobalOptions,
 } from "./tools/options.ts";
-import { createFsCliLogger } from "./tools/logger.ts";
+import { createFsCliLogger, displayResult } from "./tools/logger.ts";
 
 export function addEmptyDirCommand(command: Command<any, any>) {
   return command
@@ -21,6 +21,8 @@ export async function emptyDirCommand(options: any, paths: string[]) {
   for await (const path of paths) {
     await emptyDir(path);
   }
+
+  displayResult("Emptied", paths.length, emptyDirOptions);
 }
 
 const parseCliOptions = (options: any): GlobalOptions => {

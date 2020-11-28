@@ -3,6 +3,7 @@ import {
   setupLogger,
   handlers,
   getLogger,
+  badge
 } from "../../deps.ts";
 import type { GlobalOptions } from "./options.ts";
 
@@ -34,3 +35,8 @@ const configLog = async (option: GlobalOptions) => {
 const getFormatter = (option: GlobalOptions) => {
   return option.dry ? "[Dry Run] {msg}" : "{msg}";
 };
+
+export function displayResult(message: string, count: number, options: GlobalOptions)  {
+  const resultBadge = options.dry ? badge("Skipped", `${count}`, { msgBg: "yellow" }): badge(message, `${count}`, { msgBg: "green" });
+  console.log('\n',resultBadge);
+}
