@@ -1,5 +1,9 @@
 # fs-cli
+
  A deno tool to handle directories a files. Inspired by [rimraf](https://www.npmjs.com/package/rimraf) and mkdirp [mkdirp](https://www.npmjs.com/package/mkdirp), fs-cli aims to write build scripts that can run under any shells.
+
+[![deno land](http://img.shields.io/badge/available%20on-deno.land/x-lightgrey.svg?logo=deno&labelColor=black)](https://deno.land/x/fs_cli) 
+[![license](https://img.shields.io/badge/license-MIT-green)](https://deno.land/x/fs_cli@v0.7.7/LICENSE) 
 
 ### Table of content
 
@@ -11,6 +15,7 @@
   - [rm](#rm)
 - [Options for glob search](#glob-options)
 - [Global options](#global-options)
+- [Acknowledgments](#acknowledgments)
 - [What's new](#whats-new)
 - [Todo](#todo)
 
@@ -138,6 +143,10 @@ In case of failure, error message is always displayed, even in quiet mode.
 fs-cli rm <path1> <path2> ... <pathN> -d
 ```
 
+# Acknowledgments
+Made with [Cliffy](https://deno.land/x/cliffy) and [Cli_badges](https://deno.land/x/cli_badges)
+
+
 # What's new
 ## 0.7.7
   * use deno 1.5.4
@@ -182,6 +191,5 @@ fs-cli rm <path1> <path2> ... <pathN> -d
   * mkdirp command
 
 # Todo
-  * add messages at the end of execution (total number of deletion:copy...)
   * add follow Symlinks options to glob search
 
