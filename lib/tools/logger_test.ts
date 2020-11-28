@@ -1,4 +1,4 @@
-import { createFsCliLogger } from "./Logger.ts";
+import { createFsCliLogger } from "./logger.ts";
 import { assertEquals, blue } from "../../dev_deps.ts";
 import {
   getLogger,
