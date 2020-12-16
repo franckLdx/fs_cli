@@ -1,6 +1,6 @@
 # fs-cli
 
- A deno tool to handle directories a files. Inspired by [rimraf](https://www.npmjs.com/package/rimraf) and mkdirp [mkdirp](https://www.npmjs.com/package/mkdirp), fs-cli aims to write build scripts that can run under any shells.
+ A deno tool to handle directories and files through script. Inspired by [rimraf](https://www.npmjs.com/package/rimraf) and mkdirp [mkdirp](https://www.npmjs.com/package/mkdirp), fs-cli aims to write build scripts that can run under any shell.
 
 [![deno land](http://img.shields.io/badge/available%20on-deno.land/x-lightgrey.svg?logo=deno&labelColor=black)](https://deno.land/x/fs_cli) 
 [![license](https://img.shields.io/badge/license-MIT-green)](https://github.com/franckLdx/fs_cli/blob/master/LICENSE)
@@ -148,38 +148,37 @@ Made with [Cliffy](https://deno.land/x/cliffy) and [Cli_badges](https://deno.lan
 
 
 # What's new
+fs_cli uses recent std lib but it is tested with deno 1.3.x, 1.4.x, 1.5.x and 1.6.x 
+
+## 0.7.8
+  * use std lib 0.81.0
+
 ## 0.7.7
-  * use deno 1.5.4
-  * use lib std 0.79.0
+  * use std lib 0.79.0
 
 ## 0.7.6
   * Set for testing new Deno third parties repo management
 
 ## 0.7.5
-  * use deno 1.5.1
-  * use lib std 0.76.0
+  * use std lib 0.76.0
 
 ## 0.7.4
-  * use deno 1.4.5
-  * use lib std 0.74.0
+  * use std lib 0.74.0
 
 ## 0.7.3
-  * use deno 1.4.4
-  * use lib std 0.73.0
+  * use std lib 0.73.0
 
 ## 0.7.2
-  * use deno 1.3.2
-  * use lib std 0.6.0
+  * use std lib 0.6.0
   * use cliffy 0.13.0
 
 ## 0.7.1
-  * use deno 1.2.0
-  * use lib std 0.61.0
+  * use std lib 0.61.0
   * use cliffy 0.11.0
 
 ## 0.7.0
   * Added empty command
-  * use lib std 0.59.0
+  * use std lib 0.59.0
 
 ## 0.6.0
   * cp command now supports glob options
