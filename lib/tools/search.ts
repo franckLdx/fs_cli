@@ -1,4 +1,4 @@
-import { isGlob, globToRegExp, walk, Command } from "../../deps.ts";
+import { Command, globToRegExp, isGlob, walk } from "../../deps.ts";
 
 export function addSearchOptions(command: Command<any, any>) {
   command.option(
@@ -7,14 +7,13 @@ export function addSearchOptions(command: Command<any, any>) {
     { default: "." },
   )
     .option(
-      "--glob-dirs [glob-dirs:boolean]",
-      "include directories in the glob search",
+      "--no-glob-dirs [glob-dirs:boolean]",
+      "exclude directories from glob search",
       { default: true },
     )
     .option(
-      "--glob-files [glob-files:boolean]",
-      "include files in the glob search",
-      { default: true },
+      "--no-glob-files",
+      "exclude files from glob search",
     );
 }
 export const searchOptionsName = ["globRoot", "globDirs", "globFiles"];

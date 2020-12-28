@@ -33,10 +33,10 @@ export { BaseHandler } from "https://deno.land/std@0.82.0/log/handlers.ts";
 
 export { getLevelByName } from "https://deno.land/std@0.82.0/log/levels.ts";
 
-export { Command } from "https://deno.land/x/cliffy@v0.14.3/command/mod.ts";
+export { Command } from "https://deno.land/x/cliffy@v0.16.0/command/mod.ts";
 
 export type {
   ICommandOption,
-} from "https://deno.land/x/cliffy@v0.14.3/command/mod.ts";
+} from "https://deno.land/x/cliffy@v0.16.0/command/mod.ts";
 
 export { badge } from "https://deno.land/x/cli_badges@v0.1.1/mod.ts";
