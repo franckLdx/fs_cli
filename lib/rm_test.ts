@@ -121,7 +121,7 @@ Deno.test({
   name: "rm: mix path that exist and path that exist",
   async fn() {
     let p;
-    const dir = await makeDirectory();
+    await makeDirectory();
     try {
       const paths = await Promise.all([
         makeFile("foo.bar1"),

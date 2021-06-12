@@ -59,11 +59,12 @@ export async function checkProcess(
   );
 }
 
-export async function cleanProcess<T extends Deno.RunOptions>(
+export function cleanProcess<T extends Deno.RunOptions>(
   p: Deno.Process<T> | undefined,
-) {
+): Promise<void> {
   p?.stdin?.close();
   // p?.stdout?.close();
   // p?.stderr?.close();
   p?.close();
+  return Promise.resolve();
 }

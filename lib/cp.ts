@@ -6,7 +6,6 @@ import {
   dirname,
   Logger,
   DenoCopyOptions,
-  badge,
 } from "../deps.ts";
 import {
   GlobalOptions,

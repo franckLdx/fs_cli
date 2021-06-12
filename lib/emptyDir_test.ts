@@ -2,7 +2,6 @@ import { cleanTest } from "./tools/test/misc.ts";
 import {
   makeDirectory,
   assertExists,
-  makeFile,
   makeDirectories,
   makeFiles,
 } from "./tools/test/fs.ts";

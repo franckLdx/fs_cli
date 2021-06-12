@@ -9,7 +9,7 @@ import { exists, join, basename, dirname } from "../../../deps.ts";
 let tmpDirectory: string | undefined;
 
 export async function makeDirectories(dirsPath: string[]) {
-  let fullDirsPath = [];
+  const fullDirsPath = [];
   for await (const dirPath of dirsPath) {
     fullDirsPath.push(await makeDirectory(dirPath));
   }
@@ -29,7 +29,7 @@ export async function makeDirectory(path?: string) {
 }
 
 export async function makeFiles(filesPath: string[]) {
-  let fullFilesPath = [];
+  const fullFilesPath = [];
   for await (const filePath of filesPath) {
     fullFilesPath.push(await makeFile(filePath));
   }
