@@ -29,6 +29,8 @@ jobs:
             "v1.7.x",
             "v1.8.x",
             "v1.9.x",
+            "v1.10.x",
+            "v1.11.x",
             "nightly",
           ]
         os: [macOS-latest, windows-latest, ubuntu-latest]
