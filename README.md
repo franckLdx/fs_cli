@@ -148,9 +148,10 @@ Made with [Cliffy](https://deno.land/x/cliffy) and [Cli_badges](https://deno.lan
 
 
 # What's new
-fs_cli uses recent std lib but it is tested with deno 1.3.x to 1.11.x 
+fs_cli uses recent std lib but it is tested with deno 1.11.x
+If you use older deno relesae, try fs-cli@0.7.12.
 
-## 0.7.13
+## 1.0.00
   * use std lib std@0.98.0, cliffy@v0.19.1
 
 ## 0.7.12

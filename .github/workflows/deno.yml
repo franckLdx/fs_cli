@@ -22,8 +22,6 @@ jobs:
       matrix:
         deno:
           [
-            
-            "v1.10.x",
             "v1.11.x",
             "nightly",
           ]
